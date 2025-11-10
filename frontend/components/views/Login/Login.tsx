@@ -1,4 +1,12 @@
-import { Button, Card, CardBody, Input, Spinner } from "@heroui/react";
+import {
+  Button,
+  Card,
+  CardBody,
+  Input,
+  Spinner,
+  RadioGroup,
+  Radio,
+} from "@heroui/react";
 import Link from "next/link";
 import { FaEye, FaEyeSlash } from "react-icons/fa6";
 import { Controller } from "react-hook-form";
@@ -16,6 +24,8 @@ const Login = () => {
     handleLogin,
     isPendingLogin,
     errors,
+    userRole,
+    setUserRole,
   } = useLogin();
 
   return (
@@ -39,6 +49,15 @@ const Login = () => {
             )}
             onSubmit={handleSubmit(handleLogin)}
           >
+            <RadioGroup
+              orientation="horizontal"
+              value={userRole}
+              onValueChange={(value) => setUserRole(value as "HR" | "VENDOR")}
+            >
+              <Radio value="VENDOR">Vendor Admin</Radio>
+              <Radio value="HR">HR Admin</Radio>
+            </RadioGroup>
+
             <Controller
               control={control}
               name="email"

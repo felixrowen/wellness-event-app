@@ -18,6 +18,7 @@ const loginSchema = yup.object().shape({
 const useLogin = () => {
   const router = useRouter();
   const [visiblePassword, setVisiblePassword] = useState(false);
+  const [userRole, setUserRole] = useState<"HR" | "VENDOR">("VENDOR");
 
   const { setToaster } = useContext(ToasterContext);
 
@@ -29,14 +30,13 @@ const useLogin = () => {
     control,
     handleSubmit,
     formState: { errors },
-    reset,
-    setError,
   } = useForm({
     resolver: yupResolver(loginSchema),
   });
 
   const loginService = async (payload: any) => {
-    console.log("login payload", payload);
+    // TODO: Implement actual login API call
+    return payload;
   };
 
   const { mutate: mutateLogin, isPending: isPendingLogin } = useMutation({
@@ -53,12 +53,17 @@ const useLogin = () => {
         message: "Login success",
       });
       localStorage.setItem("isAuthenticated", "true");
-      router.push("/dashboard");
+      localStorage.setItem("userRole", userRole);
+
+      if (userRole === "HR") {
+        router.push("/hr/dashboard");
+      } else {
+        router.push("/dashboard");
+      }
     },
   });
 
   const handleLogin = (data: any) => {
-    console.log("login data", data);
     mutateLogin(data);
   };
 
@@ -70,6 +75,8 @@ const useLogin = () => {
     handleLogin,
     isPendingLogin,
     errors,
+    userRole,
+    setUserRole,
   };
 };
 
