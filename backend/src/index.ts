@@ -5,6 +5,7 @@ import cors from "cors";
 import { config } from "./config";
 import routes from "./routes";
 import { errorHandler } from "./middlewares";
+import eventService from "./services/event.service";
 
 async function init() {
   try {
@@ -24,6 +25,19 @@ async function init() {
     app.use("/api", routes);
 
     app.use(errorHandler);
+
+    setInterval(async () => {
+      try {
+        await eventService.updateEventStatuses();
+        console.log("Event statuses updated");
+      } catch (error) {
+        console.error("Error updating event statuses:", error);
+      }
+    }, 60 * 60 * 1000); // 1 HR
+
+    eventService.updateEventStatuses().catch((error) => {
+      console.error("Error updating event statuses on startup:", error);
+    });
 
     app.listen(config.port, () => {
       console.log(`Server is running on http://localhost:${config.port}`);
