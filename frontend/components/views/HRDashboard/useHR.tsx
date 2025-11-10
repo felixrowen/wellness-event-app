@@ -7,7 +7,7 @@ import { CreateEventData } from "@/components/ui/Modal/CreateEventModal";
 const useHR = () => {
   const router = useRouter();
   const [events, setEvents] = useState<EventRequest[]>(
-    getEventsByCompany("TechCorp Ltd")
+    getEventsByCompany("TechCorp Ltd"),
   );
   const [selectedEvent, setSelectedEvent] = useState<EventRequest | null>(null);
   const [isModalOpen, setIsModalOpen] = useState(false);
@@ -16,7 +16,7 @@ const useHR = () => {
 
   const statusFromUrl = (router.query.status as string) || null;
   const [statusFilter, setStatusFilter] = useState<string | null>(
-    statusFromUrl
+    statusFromUrl,
   );
 
   useEffect(() => {
@@ -66,6 +66,19 @@ const useHR = () => {
   const pendingCount = events.filter((e) => e.status === "PENDING").length;
   const approvedCount = events.filter((e) => e.status === "APPROVED").length;
   const rejectedCount = events.filter((e) => e.status === "REJECTED").length;
+  const cancelledCount = events.filter((e) => e.status === "CANCELLED").length;
+  const expiredCount = events.filter((e) => e.status === "EXPIRED").length;
+  const doneCount = events.filter((e) => e.status === "DONE").length;
+
+  const tabs = [
+    { key: "ALL", label: "All", count: events.length },
+    { key: "PENDING", label: "Pending", count: pendingCount },
+    { key: "APPROVED", label: "Approved", count: approvedCount },
+    { key: "REJECTED", label: "Rejected", count: rejectedCount },
+    { key: "CANCELLED", label: "Cancelled", count: cancelledCount },
+    { key: "EXPIRED", label: "Expired", count: expiredCount },
+    { key: "DONE", label: "Done", count: doneCount },
+  ];
 
   const filteredEvents =
     statusFilter && statusFilter !== "ALL"
@@ -90,7 +103,7 @@ const useHR = () => {
         query,
       },
       undefined,
-      { shallow: true }
+      { shallow: true },
     );
 
     setTimeout(() => {
@@ -100,7 +113,6 @@ const useHR = () => {
 
   return {
     events: filteredEvents,
-    allEventsCount: events.length,
     selectedEvent,
     isModalOpen,
     isCreateModalOpen,
@@ -108,9 +120,7 @@ const useHR = () => {
     handleViewEvent,
     handleCloseModal,
     handleCreateEvent,
-    pendingCount,
-    approvedCount,
-    rejectedCount,
+    tabs,
     statusFilter,
     handleStatusChange,
     isTransitioning,

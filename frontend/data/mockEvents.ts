@@ -6,7 +6,13 @@ export interface EventRequest {
   proposedDates: string[];
   proposedLocation: string;
   confirmedDate: string | null;
-  status: "PENDING" | "APPROVED" | "REJECTED";
+  status:
+    | "PENDING"
+    | "APPROVED"
+    | "REJECTED"
+    | "CANCELLED"
+    | "EXPIRED"
+    | "DONE";
   remarks: string;
   dateCreated: string;
   category?: string;
@@ -136,6 +142,96 @@ export const mockEventRequests: EventRequest[] = [
     category: "Music",
     imageUrl:
       "https://images.unsplash.com/photo-1501281668745-f7f57925c3b4?w=800&auto=format&fit=crop",
+  },
+  {
+    id: "9",
+    eventName: "Annual Team Building Event",
+    companyName: "TechCorp Ltd",
+    vendorName: "WellCare Services",
+    proposedDates: ["2025-10-15", "2025-10-16", "2025-10-17"],
+    proposedLocation: "Sentosa Beach, Singapore",
+    confirmedDate: "2025-10-16",
+    status: "DONE",
+    remarks: "Successfully completed event with great participation",
+    dateCreated: "2025-09-20T10:00:00Z",
+    category: "Team Building",
+    imageUrl:
+      "https://images.unsplash.com/photo-1511795409834-ef04bbd61622?w=800&auto=format&fit=crop",
+  },
+  {
+    id: "10",
+    eventName: "Summer Yoga Retreat",
+    companyName: "TechCorp Ltd",
+    vendorName: "WellCare Services",
+    proposedDates: ["2025-10-01", "2025-10-02", "2025-10-03"],
+    proposedLocation: "Botanic Gardens, Singapore",
+    confirmedDate: null,
+    status: "EXPIRED",
+    remarks: "No response received before proposed dates",
+    dateCreated: "2025-09-15T09:00:00Z",
+    category: "Health & Wellness",
+    imageUrl:
+      "https://images.unsplash.com/photo-1588286840104-8957b019727f?w=800&auto=format&fit=crop",
+  },
+  {
+    id: "11",
+    eventName: "Company Anniversary Gala",
+    companyName: "TechCorp Ltd",
+    vendorName: "WellCare Services",
+    proposedDates: ["2025-12-10", "2025-12-11", "2025-12-12"],
+    proposedLocation: "Marina Bay Sands, Singapore",
+    confirmedDate: null,
+    status: "CANCELLED",
+    remarks: "Event cancelled due to budget constraints",
+    dateCreated: "2025-11-01T14:00:00Z",
+    category: "Corporate Event",
+    imageUrl:
+      "https://images.unsplash.com/photo-1511578314322-379afb476865?w=800&auto=format&fit=crop",
+  },
+  {
+    id: "12",
+    eventName: "Leadership Training Workshop",
+    companyName: "Global Innovations Inc",
+    vendorName: "WellCare Services",
+    proposedDates: ["2025-09-20", "2025-09-21", "2025-09-22"],
+    proposedLocation: "Conference Center, Singapore",
+    confirmedDate: "2025-09-21",
+    status: "DONE",
+    remarks: "Excellent feedback from participants",
+    dateCreated: "2025-08-25T11:00:00Z",
+    category: "Training & Development",
+    imageUrl:
+      "https://images.unsplash.com/photo-1552664730-d307ca884978?w=800&auto=format&fit=crop",
+  },
+  {
+    id: "13",
+    eventName: "Holiday Party Planning",
+    companyName: "StartUp Hub",
+    vendorName: "WellCare Services",
+    proposedDates: ["2025-09-10", "2025-09-11", "2025-09-12"],
+    proposedLocation: "Clarke Quay, Singapore",
+    confirmedDate: null,
+    status: "EXPIRED",
+    remarks: "Vendor did not respond in time",
+    dateCreated: "2025-08-20T16:00:00Z",
+    category: "Entertainment",
+    imageUrl:
+      "https://images.unsplash.com/photo-1527529482837-4698179dc6ce?w=800&auto=format&fit=crop",
+  },
+  {
+    id: "14",
+    eventName: "Quarterly Sales Kickoff",
+    companyName: "Finance Corp",
+    vendorName: "WellCare Services",
+    proposedDates: ["2025-12-05", "2025-12-06", "2025-12-07"],
+    proposedLocation: "Raffles Hotel, Singapore",
+    confirmedDate: null,
+    status: "CANCELLED",
+    remarks: "Cancelled by HR - rescheduling needed",
+    dateCreated: "2025-10-28T10:30:00Z",
+    category: "Corporate Event",
+    imageUrl:
+      "https://images.unsplash.com/photo-1505373877841-8d25f7d46678?w=800&auto=format&fit=crop",
   },
 ];
 

@@ -11,7 +11,6 @@ import EventTable from "@/components/ui/Table/EventTable";
 const HRDashboard = () => {
   const {
     events,
-    allEventsCount,
     selectedEvent,
     isModalOpen,
     isCreateModalOpen,
@@ -19,20 +18,11 @@ const HRDashboard = () => {
     handleViewEvent,
     handleCloseModal,
     handleCreateEvent,
-    pendingCount,
-    approvedCount,
-    rejectedCount,
+    tabs,
     statusFilter,
     handleStatusChange,
     isTransitioning,
   } = useHR();
-
-  const tabs = [
-    { key: "ALL", label: "All", count: allEventsCount },
-    { key: "PENDING", label: "Pending", count: pendingCount },
-    { key: "APPROVED", label: "Approved", count: approvedCount },
-    { key: "REJECTED", label: "Rejected", count: rejectedCount },
-  ];
 
   return (
     <div className="space-y-6">
@@ -64,6 +54,7 @@ const HRDashboard = () => {
         <EventTable
           events={events}
           isLoading={isTransitioning}
+          userRole="HR"
           onViewDetails={handleViewEvent}
         />
       </div>

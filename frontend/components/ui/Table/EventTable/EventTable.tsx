@@ -10,51 +10,32 @@ import {
   Button,
   Skeleton,
 } from "@heroui/react";
-import { FiCalendar, FiMapPin } from "react-icons/fi";
+import { FiCalendar, FiClock, FiMapPin } from "react-icons/fi";
 
 import { EventRequest } from "@/data/mockEvents";
+import { Role, getStatusLabel, getStatusColor } from "@/utils/statusLabels";
+import { formatDate, formatTime } from "@/utils/helpers";
 
 export interface EventTableProps {
   events: EventRequest[];
   onViewDetails?: (event: EventRequest) => void;
   isLoading?: boolean;
+  userRole?: Role;
 }
 
 const EventTable: FC<EventTableProps> = ({
   events,
   onViewDetails,
   isLoading = false,
+  userRole = "VENDOR",
 }) => {
-  const formatDate = (dateString: string) => {
-    return new Date(dateString).toLocaleDateString("en-SG", {
-      day: "numeric",
-      month: "short",
-      year: "numeric",
-    });
-  };
-
-  const getStatusColor = (
-    status: string,
-  ): "warning" | "success" | "danger" | "default" => {
-    switch (status) {
-      case "PENDING":
-        return "warning";
-      case "APPROVED":
-        return "success";
-      case "REJECTED":
-        return "danger";
-      default:
-        return "default";
-    }
-  };
-
   return (
     <Table aria-label="Events table">
       <TableHeader>
         <TableColumn>EVENT</TableColumn>
         <TableColumn>COMPANY</TableColumn>
         <TableColumn>LOCATION</TableColumn>
-        <TableColumn>DATE</TableColumn>
+        <TableColumn>DATE & TIME</TableColumn>
         <TableColumn>STATUS</TableColumn>
         <TableColumn>ACTIONS</TableColumn>
       </TableHeader>
@@ -67,7 +48,6 @@ const EventTable: FC<EventTableProps> = ({
                     <Skeleton className="w-16 h-16 rounded-lg" />
                     <div className="space-y-2">
                       <Skeleton className="w-32 h-4 rounded-lg" />
-                      <Skeleton className="w-20 h-3 rounded-lg" />
                     </div>
                   </div>
                 </TableCell>
@@ -126,14 +106,20 @@ const EventTable: FC<EventTableProps> = ({
                       {formatDate(event.proposedDates[0])}
                     </span>
                   </div>
+                  <div className="flex items-center gap-2">
+                    <FiClock size={14} />
+                    <span className="text-sm">
+                      {formatTime(event.dateCreated)}
+                    </span>
+                  </div>
                 </TableCell>
                 <TableCell>
                   <Chip
-                    color={getStatusColor(event.status)}
+                    color={getStatusColor(userRole, event.status)}
                     size="sm"
                     variant="flat"
                   >
-                    {event.status}
+                    {getStatusLabel(userRole, event.status).text}
                   </Chip>
                 </TableCell>
                 <TableCell>

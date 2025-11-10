@@ -10,6 +10,8 @@ import {
 import { FiMapPin, FiCalendar } from "react-icons/fi";
 
 import { EventRequest } from "@/data/mockEvents";
+import { Role, getStatusLabel, getStatusColor } from "@/utils/statusLabels";
+import { formatDate, formatTime } from "@/utils/helpers";
 
 interface EventDetailModalProps {
   event: EventRequest | null;
@@ -22,44 +24,13 @@ export function EventDetailModal({
   event,
   isOpen,
   onClose,
-  viewMode: _viewMode = "hr",
+  viewMode = "hr",
 }: EventDetailModalProps) {
   if (!event) return null;
 
-  const formatDate = (dateString: string) => {
-    const date = new Date(dateString);
+  const userRole: Role = viewMode === "hr" ? "HR" : "VENDOR";
 
-    return date.toLocaleDateString("en-SG", {
-      weekday: "long",
-      day: "numeric",
-      month: "long",
-      year: "numeric",
-    });
-  };
-
-  const formatTime = (dateString: string) => {
-    const date = new Date(dateString);
-
-    return date.toLocaleTimeString("en-SG", {
-      hour: "2-digit",
-      minute: "2-digit",
-    });
-  };
-
-  const getStatusColor = (
-    status: string,
-  ): "warning" | "success" | "danger" | "default" => {
-    switch (status) {
-      case "PENDING":
-        return "warning";
-      case "APPROVED":
-        return "success";
-      case "REJECTED":
-        return "danger";
-      default:
-        return "default";
-    }
-  };
+  const statusLabel = getStatusLabel(userRole, event.status);
 
   return (
     <Modal isOpen={isOpen} size="2xl" onClose={onClose}>
@@ -75,11 +46,11 @@ export function EventDetailModal({
                   </p>
                 </div>
                 <Chip
-                  color={getStatusColor(event.status)}
+                  color={getStatusColor(userRole, event.status)}
                   size="sm"
                   variant="flat"
                 >
-                  {event.status}
+                  {statusLabel.text}
                 </Chip>
               </div>
             </ModalHeader>

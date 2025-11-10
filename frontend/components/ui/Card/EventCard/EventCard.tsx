@@ -7,7 +7,6 @@ import {
   Button,
   RadioGroup,
   Radio,
-  Chip,
   Image,
   Modal,
   ModalContent,
@@ -19,6 +18,12 @@ import {
 import { FiCalendar, FiMapPin, FiCheck, FiX, FiClock } from "react-icons/fi";
 
 import { EventRequest } from "@/data/mockEvents";
+import {
+  getStatusLabel,
+  getStatusBgColor,
+  getStatusTextColor,
+} from "@/utils/statusLabels";
+import { formatDate, formatTime } from "@/utils/helpers";
 
 export interface EventCardProps {
   event: EventRequest;
@@ -50,24 +55,7 @@ export const EventCard: FC<EventCardProps> = ({
     onClose();
   };
 
-  const formatDate = (dateString: string) => {
-    const date = new Date(dateString);
-
-    return date.toLocaleDateString("en-SG", {
-      day: "numeric",
-      month: "short",
-      year: "numeric",
-    });
-  };
-
-  const formatTime = (dateString: string) => {
-    const date = new Date(dateString);
-
-    return date.toLocaleTimeString("en-SG", {
-      hour: "2-digit",
-      minute: "2-digit",
-    });
-  };
+  const statusLabel = getStatusLabel("VENDOR", event.status);
 
   return (
     <>
@@ -86,46 +74,38 @@ export const EventCard: FC<EventCardProps> = ({
           />
           <div className="absolute top-3 right-3 z-10 bg-white/90 backdrop-blur-sm rounded-full px-3 py-1.5 flex items-center gap-1.5 shadow-md">
             <span
-              className={`w-2 h-2 rounded-full ${
-                event.status === "PENDING"
-                  ? "bg-yellow-500"
-                  : event.status === "APPROVED"
-                    ? "bg-green-500"
-                    : "bg-red-500"
-              }`}
+              className={`w-2 h-2 rounded-full ${getStatusBgColor("VENDOR", event.status)}`}
             />
             <span
-              className={`text-xs font-medium ${
-                event.status === "PENDING"
-                  ? "text-yellow-700"
-                  : event.status === "APPROVED"
-                    ? "text-green-700"
-                    : "text-red-700"
-              }`}
+              className={`text-xs font-medium ${getStatusTextColor("VENDOR", event.status)}`}
             >
-              {event.status === "PENDING"
-                ? "Pending"
-                : event.status === "APPROVED"
-                  ? "Approved"
-                  : "Rejected"}
+              {statusLabel.text}
             </span>
           </div>
         </CardHeader>
 
-        <CardBody className="px-4 py-3 space-y-3">
-          <div className="flex items-center gap-2 text-sm text-default-500">
-            <FiCalendar size={16} />
-            <span>{formatDate(event.proposedDates[0])}</span>
-            <FiClock size={16} />
-            <span>{formatTime(event.dateCreated)}</span>
+        <CardBody className="px-4 py-3 space-y-1">
+          <div className="flex justify-between gap-1 text-sm text-default-500">
+            <div className="flex items-center gap-1">
+              <FiCalendar className="mb-[2px]" size={14} />
+              <span>{formatDate(event.proposedDates[0])}</span>
+            </div>
+            <div className="flex items-center gap-1">
+              <FiClock size={14} />
+              <span>{formatTime(event.dateCreated)}</span>
+            </div>
           </div>
 
           <h3 className="text-lg font-bold text-default-900 line-clamp-1">
             {event.eventName}
           </h3>
 
-          <div className="flex items-center gap-2 text-sm text-default-600">
-            <FiMapPin size={16} />
+          <p className="text-sm font-medium text-blue-600 line-clamp-1">
+            {event.companyName}
+          </p>
+
+          <div className="flex items-center gap-1 text-xs text-default-600">
+            <FiMapPin size={13} />
             <span className="line-clamp-1">{event.proposedLocation}</span>
           </div>
         </CardBody>

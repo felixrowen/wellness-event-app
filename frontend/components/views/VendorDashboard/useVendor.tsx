@@ -56,6 +56,45 @@ const useVendor = () => {
   const pendingEvents = events.filter((event) => event.status === "PENDING");
   const approvedEvents = events.filter((event) => event.status === "APPROVED");
   const rejectedEvents = events.filter((event) => event.status === "REJECTED");
+  const cancelledEvents = events.filter(
+    (event) => event.status === "CANCELLED",
+  );
+  const expiredEvents = events.filter((event) => event.status === "EXPIRED");
+  const doneEvents = events.filter((event) => event.status === "DONE");
+
+  const tabs = [
+    { key: "ALL", label: "All", count: events.length },
+    {
+      key: "PENDING",
+      label: "Pending",
+      count: pendingEvents.length,
+    },
+    {
+      key: "APPROVED",
+      label: "Approved",
+      count: approvedEvents.length,
+    },
+    {
+      key: "REJECTED",
+      label: "Rejected",
+      count: rejectedEvents.length,
+    },
+    {
+      key: "CANCELLED",
+      label: "Cancelled",
+      count: cancelledEvents.length,
+    },
+    {
+      key: "EXPIRED",
+      label: "Expired",
+      count: expiredEvents.length,
+    },
+    {
+      key: "DONE",
+      label: "Done",
+      count: doneEvents.length,
+    },
+  ];
 
   const filteredEvents = statusFilter
     ? events.filter((event) => event.status === statusFilter)
@@ -110,12 +149,9 @@ const useVendor = () => {
 
   return {
     events: filteredEvents,
-    allEventsCount: events.length,
     handleApprove,
     handleReject,
-    pendingEvents,
-    approvedEvents,
-    rejectedEvents,
+    tabs,
     statusFilter,
     handleStatusChange,
     handleViewModeChange,
