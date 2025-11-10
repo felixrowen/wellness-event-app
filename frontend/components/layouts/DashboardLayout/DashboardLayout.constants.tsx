@@ -39,14 +39,8 @@ export const SIDEBAR_VENDOR = (handleLogout: () => void): SidebarSection[] => [
     items: [
       {
         key: "dashboard",
-        label: "Dashboard",
-        href: "/dashboard",
-        icon: <FiHome size={20} />,
-      },
-      {
-        key: "events",
         label: "My Events",
-        href: "/events",
+        href: "/dashboard",
         icon: <FiCalendar size={20} />,
       },
     ],

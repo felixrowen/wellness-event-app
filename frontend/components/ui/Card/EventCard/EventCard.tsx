@@ -72,40 +72,44 @@ export const EventCard: FC<EventCardProps> = ({
   return (
     <>
       <Card className="w-full max-w-[400px] hover:shadow-lg transition-shadow">
-        <CardHeader className="p-0 relative">
+        <CardHeader className="p-0 relative overflow-visible">
           <Image
             removeWrapper
             alt={event.eventName}
-            className="w-full h-[200px] object-cover rounded-b-none"
+            className={`w-full h-[200px] object-cover rounded-b-none ${
+              event.status === "REJECTED" ? "grayscale" : ""
+            }`}
             src={
               event.imageUrl ||
               "https://images.unsplash.com/photo-1540575467063-178a50c2df87?w=800&auto=format&fit=crop"
             }
           />
-
-          <Chip
-            className="absolute top-3 left-3"
-            color="secondary"
-            size="sm"
-            variant="solid"
-          >
-            {event.category || "Event"}
-          </Chip>
-
-          <Chip
-            className="absolute top-3 right-3"
-            color={
-              event.status === "PENDING"
-                ? "warning"
+          <div className="absolute top-3 right-3 z-10 bg-white/90 backdrop-blur-sm rounded-full px-3 py-1.5 flex items-center gap-1.5 shadow-md">
+            <span
+              className={`w-2 h-2 rounded-full ${
+                event.status === "PENDING"
+                  ? "bg-yellow-500"
+                  : event.status === "APPROVED"
+                    ? "bg-green-500"
+                    : "bg-red-500"
+              }`}
+            />
+            <span
+              className={`text-xs font-medium ${
+                event.status === "PENDING"
+                  ? "text-yellow-700"
+                  : event.status === "APPROVED"
+                    ? "text-green-700"
+                    : "text-red-700"
+              }`}
+            >
+              {event.status === "PENDING"
+                ? "Pending"
                 : event.status === "APPROVED"
-                  ? "success"
-                  : "danger"
-            }
-            size="sm"
-            variant="flat"
-          >
-            {event.status}
-          </Chip>
+                  ? "Approved"
+                  : "Rejected"}
+            </span>
+          </div>
         </CardHeader>
 
         <CardBody className="px-4 py-3 space-y-3">
