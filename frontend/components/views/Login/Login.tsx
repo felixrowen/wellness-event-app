@@ -45,7 +45,7 @@ const Login = () => {
           <form
             className={cn(
               "flex w-80 flex-col",
-              Object.keys(errors).length > 0 ? "gap-2" : "gap-4"
+              Object.keys(errors).length > 0 ? "gap-2" : "gap-4",
             )}
             onSubmit={handleSubmit(handleLogin)}
           >

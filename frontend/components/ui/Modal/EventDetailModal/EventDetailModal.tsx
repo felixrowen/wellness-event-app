@@ -7,7 +7,7 @@ import {
   Button,
   Chip,
 } from "@heroui/react";
-import { FiMapPin, FiUsers, FiCalendar } from "react-icons/fi";
+import { FiMapPin, FiCalendar } from "react-icons/fi";
 
 import { EventRequest } from "@/data/mockEvents";
 

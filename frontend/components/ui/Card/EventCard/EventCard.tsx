@@ -76,7 +76,7 @@ export const EventCard: FC<EventCardProps> = ({
           <Image
             removeWrapper
             alt={event.eventName}
-            className="w-full h-[200px] object-cover"
+            className="w-full h-[200px] object-cover rounded-b-none"
             src={
               event.imageUrl ||
               "https://images.unsplash.com/photo-1540575467063-178a50c2df87?w=800&auto=format&fit=crop"
@@ -116,7 +116,7 @@ export const EventCard: FC<EventCardProps> = ({
             <span>{formatTime(event.dateCreated)}</span>
           </div>
 
-          <h3 className="text-lg font-bold text-default-900 line-clamp-2">
+          <h3 className="text-lg font-bold text-default-900 line-clamp-1">
             {event.eventName}
           </h3>
 

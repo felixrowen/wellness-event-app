@@ -15,7 +15,7 @@ import {
 import { FiEye, FiPlus } from "react-icons/fi";
 import { useRouter } from "next/router";
 
-import { HRDashboardLayout } from "@/components/layouts/HRDashboardLayout";
+import { DashboardLayout } from "@/components/layouts/DashboardLayout";
 import { getEventsByCompany, EventRequest } from "@/data/mockEvents";
 import { EventDetailModal } from "@/components/ui/Modal/EventDetailModal";
 import {
@@ -27,7 +27,7 @@ export default function HRDashboardPage() {
   const router = useRouter();
   // Mock: Get events for TechCorp Ltd (mock data)
   const [events, setEvents] = useState<EventRequest[]>(
-    getEventsByCompany("TechCorp Ltd"),
+    getEventsByCompany("TechCorp Ltd")
   );
   const [selectedEvent, setSelectedEvent] = useState<EventRequest | null>(null);
   const [isModalOpen, setIsModalOpen] = useState(false);
@@ -106,7 +106,7 @@ export default function HRDashboardPage() {
   };
 
   const getStatusColor = (
-    status: string,
+    status: string
   ): "warning" | "success" | "danger" | "default" => {
     switch (status) {
       case "PENDING":
@@ -125,7 +125,7 @@ export default function HRDashboardPage() {
   const rejectedCount = events.filter((e) => e.status === "REJECTED").length;
 
   return (
-    <HRDashboardLayout>
+    <DashboardLayout title="HR Admin Dashboard" type="hr">
       <div className="space-y-6">
         <div className="flex justify-between items-center">
           <div>
@@ -266,6 +266,6 @@ export default function HRDashboardPage() {
         onClose={() => setIsCreateModalOpen(false)}
         onSubmit={handleCreateEvent}
       />
-    </HRDashboardLayout>
+    </DashboardLayout>
   );
 }

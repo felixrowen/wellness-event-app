@@ -1,8 +1,8 @@
 import { useState, useEffect } from "react";
-import { Card, CardBody, CardHeader, Chip } from "@heroui/react";
+import { Card, CardBody, Chip } from "@heroui/react";
 import { useRouter } from "next/router";
 
-import { VendorDashboardLayout } from "@/components/layouts/VendorDashboardLayout";
+import { DashboardLayout } from "@/components/layouts/DashboardLayout";
 import { EventCard } from "@/components/ui/Card/EventCard";
 import { mockEventRequests, EventRequest } from "@/data/mockEvents";
 
@@ -43,8 +43,8 @@ export default function DashboardPage() {
               status: "APPROVED" as const,
               remarks: `Approved for ${selectedDate}`,
             }
-          : event,
-      ),
+          : event
+      )
     );
 
     // TODO: Send approval to backend
@@ -55,10 +55,8 @@ export default function DashboardPage() {
   const handleReject = (eventId: string) => {
     setEvents((prevEvents) =>
       prevEvents.map((event) =>
-        event.id === eventId
-          ? { ...event, status: "REJECTED" as const }
-          : event,
-      ),
+        event.id === eventId ? { ...event, status: "REJECTED" as const } : event
+      )
     );
 
     // TODO: Send rejection to backend
@@ -71,7 +69,7 @@ export default function DashboardPage() {
   const rejectedEvents = events.filter((event) => event.status === "REJECTED");
 
   return (
-    <VendorDashboardLayout>
+    <DashboardLayout title="Vendor Dashboard" type="vendor">
       <div className="space-y-6">
         <div>
           <h2 className="text-2xl font-bold text-default-900">
@@ -144,6 +142,6 @@ export default function DashboardPage() {
           </div>
         )}
       </div>
-    </VendorDashboardLayout>
+    </DashboardLayout>
   );
 }
