@@ -1,4 +1,4 @@
-import { DashboardLayout } from "@/components/layouts/DashboardLayout";
+import DashboardLayout from "@/components/layouts/DashboardLayout";
 import VendorDashboard from "@/components/views/VendorDashboard";
 
 const DashboardPage = () => {
@@ -7,6 +7,6 @@ const DashboardPage = () => {
       <VendorDashboard />
     </DashboardLayout>
   );
-}
+};
 
 export default DashboardPage;

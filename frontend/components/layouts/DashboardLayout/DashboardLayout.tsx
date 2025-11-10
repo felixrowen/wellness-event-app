@@ -18,7 +18,7 @@ export interface DashboardLayoutProps {
   sidebarSections?: SidebarSection[];
 }
 
-export const DashboardLayout = ({
+const DashboardLayout = ({
   children,
   title = "Dashboard",
   description,
@@ -149,3 +149,5 @@ export const DashboardLayout = ({
     </>
   );
 };
+
+export default DashboardLayout;
