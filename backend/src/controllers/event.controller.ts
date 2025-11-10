@@ -44,6 +44,50 @@ export class EventController {
       response.error(res, error, "Failed to retrieve event");
     }
   }
+
+  async approveEvent(req: IReqUser, res: Response) {
+    try {
+      const { id } = req.params;
+      const userId = req.user?.id;
+      const userRole = req.user?.role;
+
+      if (!userId || !userRole) {
+        return response.unauthorized(res, "User not authenticated");
+      }
+
+      const event = await eventService.approveEvent(
+        id,
+        req.body,
+        userId,
+        userRole
+      );
+      response.success(res, event, "Event approved successfully");
+    } catch (error) {
+      response.error(res, error, "Failed to approve event");
+    }
+  }
+
+  async rejectEvent(req: IReqUser, res: Response) {
+    try {
+      const { id } = req.params;
+      const userId = req.user?.id;
+      const userRole = req.user?.role;
+
+      if (!userId || !userRole) {
+        return response.unauthorized(res, "User not authenticated");
+      }
+
+      const event = await eventService.rejectEvent(
+        id,
+        req.body,
+        userId,
+        userRole
+      );
+      response.success(res, event, "Event rejected successfully");
+    } catch (error) {
+      response.error(res, error, "Failed to reject event");
+    }
+  }
 }
 
 export default new EventController();

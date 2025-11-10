@@ -79,14 +79,17 @@ export class EventService {
 
   async createEvent(data: CreateEventDTO, hrId: Types.ObjectId) {
     try {
+      const hasDates = data.proposedDates && data.proposedDates.length > 0;
+      const initialStatus = hasDates ? "PENDING" : "AWAITING_VENDOR_PROPOSAL";
+
       const event = await eventRepository.create({
         title: data.title,
         description: data.description,
-        proposedDates: data.proposedDates,
+        proposedDates: data.proposedDates || [],
         location: data.location,
         assignedVendorId: new Types.ObjectId(data.assignedVendorId),
         hrId,
-        status: "PENDING",
+        status: initialStatus,
       });
 
       return event;
@@ -140,7 +143,8 @@ export class EventService {
   async approveEvent(
     eventId: string | Types.ObjectId,
     data: ApproveEventDTO,
-    vendorId: Types.ObjectId
+    userId: Types.ObjectId,
+    userRole: string
   ) {
     try {
       const event = await eventRepository.findById(eventId);
@@ -149,42 +153,103 @@ export class EventService {
         throw new Error("Event not found");
       }
 
-      if (event.status !== "PENDING") {
-        throw new Error("Event is not in pending status");
-      }
-
       const now = new Date();
-      const validDates = event.proposedDates.filter(
-        (date) => new Date(date) >= now
-      );
 
-      if (validDates.length === 0) {
-        await eventRepository.updateById(eventId, {
-          status: "EXPIRED",
+      // Flow: Vendor approves HR's proposed dates
+      if (event.status === "PENDING" && userRole === ROLES.VENDOR) {
+        if (!data.confirmedDate) {
+          throw new Error("Confirmed date is required");
+        }
+
+        const validDates = event.proposedDates.filter(
+          (date) => new Date(date) >= now
+        );
+
+        if (validDates.length === 0) {
+          await eventRepository.updateById(eventId, {
+            status: "EXPIRED",
+          });
+          throw new Error("All proposed dates have expired");
+        }
+
+        const confirmedDate = new Date(data.confirmedDate);
+        const isValidDate = event.proposedDates.some(
+          (date) => new Date(date).getTime() === confirmedDate.getTime()
+        );
+
+        if (!isValidDate) {
+          throw new Error("Confirmed date must be one of the proposed dates");
+        }
+
+        if (confirmedDate < now) {
+          throw new Error("Confirmed date must be in the future");
+        }
+
+        const updatedEvent = await eventRepository.updateById(eventId, {
+          status: "APPROVED",
+          confirmedDate: data.confirmedDate,
+          approvedVendorId: userId,
         });
-        throw new Error("All proposed dates have expired");
+
+        return updatedEvent;
       }
 
-      const confirmedDate = new Date(data.confirmedDate);
-      const isValidDate = event.proposedDates.some(
-        (date) => new Date(date).getTime() === confirmedDate.getTime()
-      );
+      // Flow: Vendor proposes dates (when HR didn't provide dates)
+      if (
+        event.status === "AWAITING_VENDOR_PROPOSAL" &&
+        userRole === ROLES.VENDOR
+      ) {
+        if (!data.proposedDates || data.proposedDates.length === 0) {
+          throw new Error("Proposed dates are required");
+        }
 
-      if (!isValidDate) {
-        throw new Error("Confirmed date must be one of the proposed dates");
+        const allDatesValid = data.proposedDates.every(
+          (date) => new Date(date) >= now
+        );
+
+        if (!allDatesValid) {
+          throw new Error("All proposed dates must be in the future");
+        }
+
+        const updatedEvent = await eventRepository.updateById(eventId, {
+          status: "AWAITING_HR_APPROVAL",
+          proposedDates: data.proposedDates,
+        });
+
+        return updatedEvent;
       }
 
-      if (confirmedDate < now) {
-        throw new Error("Confirmed date must be in the future");
+      // Flow: HR approves vendor's proposed dates
+      if (event.status === "AWAITING_HR_APPROVAL" && userRole === ROLES.HR) {
+        if (!data.confirmedDate) {
+          throw new Error("Confirmed date is required");
+        }
+
+        const confirmedDate = new Date(data.confirmedDate);
+        const isValidDate = event.proposedDates.some(
+          (date) => new Date(date).getTime() === confirmedDate.getTime()
+        );
+
+        if (!isValidDate) {
+          throw new Error(
+            "Confirmed date must be one of the vendor's proposed dates"
+          );
+        }
+
+        if (confirmedDate < now) {
+          throw new Error("Confirmed date must be in the future");
+        }
+
+        const updatedEvent = await eventRepository.updateById(eventId, {
+          status: "APPROVED",
+          confirmedDate: data.confirmedDate,
+          approvedVendorId: event.assignedVendorId,
+        });
+
+        return updatedEvent;
       }
 
-      const updatedEvent = await eventRepository.updateById(eventId, {
-        status: "APPROVED",
-        confirmedDate: data.confirmedDate,
-        approvedVendorId: vendorId,
-      });
-
-      return updatedEvent;
+      throw new Error("Invalid operation for current event status");
     } catch (error: any) {
       throw error;
     }
@@ -193,7 +258,8 @@ export class EventService {
   async rejectEvent(
     eventId: string | Types.ObjectId,
     data: RejectEventDTO,
-    vendorId: Types.ObjectId
+    userId: Types.ObjectId,
+    userRole: string
   ) {
     try {
       const event = await eventRepository.findById(eventId);
@@ -202,21 +268,34 @@ export class EventService {
         throw new Error("Event not found");
       }
 
-      if (event.status !== "PENDING") {
-        throw new Error("Event is not in pending status");
+      if (event.status === "PENDING" && userRole === ROLES.VENDOR) {
+        if (event.assignedVendorId.toString() !== userId.toString()) {
+          throw new Error("You are not authorized to reject this event");
+        }
+
+        const updatedEvent = await eventRepository.updateById(eventId, {
+          status: "REJECTED",
+          rejectionReason: data.rejectionReason,
+          approvedVendorId: userId,
+        });
+
+        return updatedEvent;
       }
 
-      if (event.assignedVendorId.toString() !== vendorId.toString()) {
-        throw new Error("You are not authorized to reject this event");
+      if (event.status === "AWAITING_HR_APPROVAL" && userRole === ROLES.HR) {
+        if (event.hrId.toString() !== userId.toString()) {
+          throw new Error("You are not authorized to reject this event");
+        }
+
+        const updatedEvent = await eventRepository.updateById(eventId, {
+          status: "REJECTED",
+          rejectionReason: data.rejectionReason,
+        });
+
+        return updatedEvent;
       }
 
-      const updatedEvent = await eventRepository.updateById(eventId, {
-        status: "REJECTED",
-        rejectionReason: data.rejectionReason,
-        approvedVendorId: vendorId,
-      });
-
-      return updatedEvent;
+      throw new Error("Invalid operation for current event status");
     } catch (error: any) {
       throw error;
     }

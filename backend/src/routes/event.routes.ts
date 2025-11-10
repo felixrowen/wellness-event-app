@@ -1,6 +1,5 @@
 import { Router } from "express";
 import eventController from "../controllers/event.controller";
-import vendorController from "../controllers/vendor.controller";
 import { authenticate, validate, AccessControlLimit } from "../middlewares";
 import {
   createEventValidator,
@@ -36,17 +35,17 @@ router.get(
 router.put(
   "/:id/approve",
   authenticate,
-  AccessControlLimit([ROLES.VENDOR]),
+  AccessControlLimit([ROLES.HR, ROLES.VENDOR]),
   validate(approveEventValidator),
-  vendorController.approveEvent.bind(vendorController)
+  eventController.approveEvent.bind(eventController)
 );
 
 router.put(
   "/:id/reject",
   authenticate,
-  AccessControlLimit([ROLES.VENDOR]),
+  AccessControlLimit([ROLES.HR, ROLES.VENDOR]),
   validate(rejectEventValidator),
-  vendorController.rejectEvent.bind(vendorController)
+  eventController.rejectEvent.bind(eventController)
 );
 
 export default router;

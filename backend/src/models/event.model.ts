@@ -4,10 +4,18 @@ export interface IEvent {
   _id?: Types.ObjectId;
   title: string;
   description: string;
+  category: 1 | 2 | 3 | 4 | 5 | 6;
   proposedDates: Date[];
   confirmedDate?: Date;
   location?: string;
-  status: "PENDING" | "APPROVED" | "REJECTED" | "COMPLETE" | "EXPIRED";
+  status:
+    | "PENDING"
+    | "APPROVED"
+    | "REJECTED"
+    | "COMPLETE"
+    | "EXPIRED"
+    | "AWAITING_VENDOR_PROPOSAL"
+    | "AWAITING_HR_APPROVAL";
   hrId: Types.ObjectId;
   assignedVendorId: Types.ObjectId;
   approvedVendorId?: Types.ObjectId;
@@ -28,15 +36,15 @@ const EventSchema = new mongoose.Schema<IEvent>(
       required: true,
       trim: true,
     },
+    category: {
+      type: Number,
+      enum: [1, 2, 3, 4, 5, 6],
+      required: true,
+    },
     proposedDates: {
       type: [Date],
-      required: true,
-      validate: {
-        validator: function (dates: Date[]) {
-          return dates && dates.length > 0;
-        },
-        message: "At least one proposed date is required",
-      },
+      required: false,
+      default: [],
     },
     confirmedDate: {
       type: Date,
@@ -49,7 +57,15 @@ const EventSchema = new mongoose.Schema<IEvent>(
     },
     status: {
       type: String,
-      enum: ["PENDING", "APPROVED", "REJECTED", "COMPLETE", "EXPIRED"],
+      enum: [
+        "PENDING",
+        "APPROVED",
+        "REJECTED",
+        "COMPLETE",
+        "EXPIRED",
+        "AWAITING_VENDOR_PROPOSAL",
+        "AWAITING_HR_APPROVAL",
+      ],
       default: "PENDING",
     },
     hrId: {
