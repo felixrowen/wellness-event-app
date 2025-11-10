@@ -1,9 +1,24 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
+import { useRouter } from "next/router";
 
 import { mockEventRequests, EventRequest } from "@/data/mockEvents";
 
 const useVendor = () => {
+  const router = useRouter();
   const [events, setEvents] = useState<EventRequest[]>(mockEventRequests);
+
+  const statusFromUrl = (router.query.status as string) || null;
+  const viewFromUrl = (router.query.view as "card" | "list") || "card";
+
+  const [statusFilter, setStatusFilter] = useState<string | null>(
+    statusFromUrl,
+  );
+
+  useEffect(() => {
+    if (statusFromUrl !== statusFilter) {
+      setStatusFilter(statusFromUrl);
+    }
+  }, [statusFromUrl, statusFilter]);
 
   const handleApprove = (eventId: string, selectedDate: string) => {
     setEvents((prevEvents) =>
@@ -41,13 +56,58 @@ const useVendor = () => {
   const approvedEvents = events.filter((event) => event.status === "APPROVED");
   const rejectedEvents = events.filter((event) => event.status === "REJECTED");
 
+  const filteredEvents = statusFilter
+    ? events.filter((event) => event.status === statusFilter)
+    : events;
+
+  const handleStatusChange = (status: string | null) => {
+    setStatusFilter(status);
+
+    const query = { ...router.query };
+
+    if (status && status !== "ALL") {
+      query.status = status;
+    } else {
+      delete query.status;
+    }
+
+    router.push(
+      {
+        pathname: router.pathname,
+        query,
+      },
+      undefined,
+      { shallow: true },
+    );
+  };
+
+  const handleViewModeChange = (mode: "card" | "list") => {
+    const query = { ...router.query };
+
+    query.view = mode;
+
+    router.push(
+      {
+        pathname: router.pathname,
+        query,
+      },
+      undefined,
+      { shallow: true },
+    );
+  };
+
   return {
-    events,
+    events: filteredEvents,
+    allEventsCount: events.length,
     handleApprove,
     handleReject,
     pendingEvents,
     approvedEvents,
     rejectedEvents,
+    statusFilter,
+    handleStatusChange,
+    handleViewModeChange,
+    viewMode: viewFromUrl,
   };
 };
 

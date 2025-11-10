@@ -1,10 +1,13 @@
 import { useEffect, useState } from "react";
-import { Chip } from "@heroui/react";
+import { Button, ButtonGroup } from "@heroui/react";
 import { useRouter } from "next/router";
+import { FiGrid, FiList } from "react-icons/fi";
 
 import useVendor from "./useVendor";
 
 import { EventCard } from "@/components/ui/Card/EventCard";
+import FilterTabs from "@/components/ui/FilterTabs";
+import EventTable from "@/components/ui/Table/EventTable";
 
 const VendorDashboard = () => {
   const router = useRouter();
@@ -12,11 +15,16 @@ const VendorDashboard = () => {
 
   const {
     events,
+    allEventsCount,
     handleApprove,
     handleReject,
     pendingEvents,
     approvedEvents,
     rejectedEvents,
+    statusFilter,
+    handleStatusChange,
+    handleViewModeChange,
+    viewMode,
   } = useVendor();
 
   useEffect(() => {
@@ -44,35 +52,67 @@ const VendorDashboard = () => {
 
   return (
     <div className="space-y-6">
-      {events.length > 0 && (
+      {allEventsCount > 0 && (
         <div className="space-y-4">
-          <div className="flex items-center gap-3">
+          <div className="flex flex-col gap-4">
             <h3 className="text-xl font-semibold text-default-900">
-              All Events
+              My Events
             </h3>
-            <Chip color="default" size="sm" variant="flat">
-              All: {events.length}
-            </Chip>
-            <Chip color="warning" size="sm" variant="flat">
-              Pending: {pendingEvents.length}
-            </Chip>
-            <Chip color="success" size="sm" variant="flat">
-              Approved: {approvedEvents.length}
-            </Chip>
-            <Chip color="danger" size="sm" variant="flat">
-              Rejected: {rejectedEvents.length}
-            </Chip>
-          </div>
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
-            {events.map((event) => (
-              <EventCard
-                key={event.id}
-                event={event}
-                onApprove={handleApprove}
-                onReject={handleReject}
+            <div className="flex items-center justify-between gap-4">
+              <FilterTabs
+                selectedKey={statusFilter}
+                tabs={[
+                  { key: "ALL", label: "All", count: allEventsCount },
+                  {
+                    key: "PENDING",
+                    label: "Pending",
+                    count: pendingEvents.length,
+                  },
+                  {
+                    key: "APPROVED",
+                    label: "Approved",
+                    count: approvedEvents.length,
+                  },
+                  {
+                    key: "REJECTED",
+                    label: "Rejected",
+                    count: rejectedEvents.length,
+                  },
+                ]}
+                onSelectionChange={handleStatusChange}
               />
-            ))}
+              <ButtonGroup size="sm" variant="flat">
+                <Button
+                  isIconOnly
+                  color={viewMode === "card" ? "primary" : "default"}
+                  onPress={() => handleViewModeChange("card")}
+                >
+                  <FiGrid size={18} />
+                </Button>
+                <Button
+                  isIconOnly
+                  color={viewMode === "list" ? "primary" : "default"}
+                  onPress={() => handleViewModeChange("list")}
+                >
+                  <FiList size={18} />
+                </Button>
+              </ButtonGroup>
+            </div>
           </div>
+          {viewMode === "card" ? (
+            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
+              {events.map((event) => (
+                <EventCard
+                  key={event.id}
+                  event={event}
+                  onApprove={handleApprove}
+                  onReject={handleReject}
+                />
+              ))}
+            </div>
+          ) : (
+            <EventTable events={events} />
+          )}
         </div>
       )}
     </div>
