@@ -180,21 +180,6 @@ export const EventCard: FC<EventCardProps> = ({
                   ))}
                 </RadioGroup>
               </div>
-
-              <div className="flex gap-4 p-3 bg-default-100 rounded-lg">
-                <div>
-                  <p className="text-sm text-default-500">Price</p>
-                  <p className="text-xl font-bold">${event.price || 0}</p>
-                </div>
-                {event.capacity && (
-                  <div>
-                    <p className="text-sm text-default-500">Capacity</p>
-                    <p className="text-xl font-bold">
-                      {event.registered}/{event.capacity}
-                    </p>
-                  </div>
-                )}
-              </div>
             </div>
           </ModalBody>
           <ModalFooter>
