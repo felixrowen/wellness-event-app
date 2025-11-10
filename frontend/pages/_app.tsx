@@ -5,6 +5,7 @@ import { ThemeProvider as NextThemesProvider } from "next-themes";
 import { useRouter } from "next/router";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 
+import { ToasterProvider } from "@/contexts/ToasterContext";
 import { onErrorHander } from "@/libs/axios/responseHandler";
 import { fontSans } from "@/config/fonts";
 import "@/styles/globals.css";
@@ -33,7 +34,9 @@ export default function App({ Component, pageProps }: AppProps) {
     <QueryClientProvider client={queryClient}>
       <HeroUIProvider navigate={router.push}>
         <NextThemesProvider attribute="class" defaultTheme="light">
-          <Component {...pageProps} />
+          <ToasterProvider>
+            <Component {...pageProps} />
+          </ToasterProvider>
         </NextThemesProvider>
       </HeroUIProvider>
     </QueryClientProvider>

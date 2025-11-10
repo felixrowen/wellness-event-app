@@ -49,7 +49,7 @@ const Login = () => {
                   errorMessage={errors.email?.message}
                   isInvalid={errors.email !== undefined}
                   label="Email"
-                  type="email"
+                  type="text"
                   variant="bordered"
                 />
               )}
@@ -68,9 +68,9 @@ const Login = () => {
                       onClick={handleVisiblePassword}
                     >
                       {visiblePassword ? (
-                        <FaEye className="pointer-events-none text-xl text-default-400" />
+                        <FaEye className="pointer-events-none text-xl text-default-400 mb-2" />
                       ) : (
-                        <FaEyeSlash className="pointer-events-none text-xl text-default-400" />
+                        <FaEyeSlash className="pointer-events-none text-xl text-default-400 mb-2" />
                       )}
                     </button>
                   }
