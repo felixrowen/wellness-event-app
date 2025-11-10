@@ -8,7 +8,7 @@ import { SIDEBAR_HR, SIDEBAR_VENDOR } from "./DashboardLayout.constants";
 import { Sidebar, SidebarSection } from "@/components/ui/Sidebar";
 import { Logo } from "@/components/icons";
 import { Navbar } from "@/components/ui/Navbar";
-import { Head } from "@/components/layouts/head";
+import { PageHead } from "@/components/layouts/head";
 
 export interface DashboardLayoutProps {
   children: ReactNode;
@@ -75,7 +75,7 @@ export const DashboardLayout = ({
 
   return (
     <>
-      <Head title={title} />
+      <PageHead title={title} />
       <div className="flex h-screen overflow-hidden bg-default-50">
         <div className="lg:hidden fixed top-4 left-4 z-50">
           <Button

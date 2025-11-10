@@ -7,7 +7,7 @@ interface PropTypes {
   title?: string;
 }
 
-export const Head = (props: PropTypes) => {
+export const PageHead = (props: PropTypes) => {
   const { title } = props;
 
   return (
