@@ -16,6 +16,10 @@ export class UserRepository {
     return UserModel.findOne({ email });
   }
 
+  async findAllVendors(): Promise<IUser[]> {
+    return UserModel.find({ role: "VENDOR" }).select("fullName email vendorName");
+  }
+
   async create(userData: Partial<IUser>): Promise<IUser> {
     return UserModel.create(userData);
   }
