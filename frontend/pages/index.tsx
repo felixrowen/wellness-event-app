@@ -1,6 +1,6 @@
 import { Button } from "@heroui/button";
 
-import DefaultLayout from "@/layouts/default";
+import DefaultLayout from "@/components/layouts/default";
 
 export default function IndexPage() {
   return (
