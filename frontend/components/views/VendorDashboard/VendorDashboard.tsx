@@ -1,5 +1,5 @@
 import { useEffect, useState } from "react";
-import { Button, ButtonGroup } from "@heroui/react";
+import { Button, ButtonGroup, Skeleton, Card } from "@heroui/react";
 import { useRouter } from "next/router";
 import { FiGrid, FiList } from "react-icons/fi";
 
@@ -25,6 +25,7 @@ const VendorDashboard = () => {
     handleStatusChange,
     handleViewModeChange,
     viewMode,
+    isTransitioning,
   } = useVendor();
 
   useEffect(() => {
@@ -101,17 +102,40 @@ const VendorDashboard = () => {
           </div>
           {viewMode === "card" ? (
             <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
-              {events.map((event) => (
-                <EventCard
-                  key={event.id}
-                  event={event}
-                  onApprove={handleApprove}
-                  onReject={handleReject}
-                />
-              ))}
+              {isTransitioning
+                ? Array.from({ length: 4 }).map((_, index) => (
+                    <Card
+                      key={index}
+                      className="w-full space-y-5 p-4"
+                      radius="lg"
+                    >
+                      <Skeleton className="rounded-lg">
+                        <div className="h-48 rounded-lg bg-default-300" />
+                      </Skeleton>
+                      <div className="space-y-3">
+                        <Skeleton className="w-3/5 rounded-lg">
+                          <div className="h-3 w-3/5 rounded-lg bg-default-200" />
+                        </Skeleton>
+                        <Skeleton className="w-4/5 rounded-lg">
+                          <div className="h-3 w-4/5 rounded-lg bg-default-200" />
+                        </Skeleton>
+                        <Skeleton className="w-2/5 rounded-lg">
+                          <div className="h-3 w-2/5 rounded-lg bg-default-300" />
+                        </Skeleton>
+                      </div>
+                    </Card>
+                  ))
+                : events.map((event) => (
+                    <EventCard
+                      key={event.id}
+                      event={event}
+                      onApprove={handleApprove}
+                      onReject={handleReject}
+                    />
+                  ))}
             </div>
           ) : (
-            <EventTable events={events} />
+            <EventTable events={events} isLoading={isTransitioning} />
           )}
         </div>
       )}

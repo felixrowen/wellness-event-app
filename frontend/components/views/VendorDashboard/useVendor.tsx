@@ -6,6 +6,7 @@ import { mockEventRequests, EventRequest } from "@/data/mockEvents";
 const useVendor = () => {
   const router = useRouter();
   const [events, setEvents] = useState<EventRequest[]>(mockEventRequests);
+  const [isTransitioning, setIsTransitioning] = useState(false);
 
   const statusFromUrl = (router.query.status as string) || null;
   const viewFromUrl = (router.query.view as "card" | "list") || "card";
@@ -61,6 +62,7 @@ const useVendor = () => {
     : events;
 
   const handleStatusChange = (status: string | null) => {
+    setIsTransitioning(true);
     setStatusFilter(status);
 
     const query = { ...router.query };
@@ -79,9 +81,15 @@ const useVendor = () => {
       undefined,
       { shallow: true },
     );
+
+    setTimeout(() => {
+      setIsTransitioning(false);
+    }, 300);
   };
 
   const handleViewModeChange = (mode: "card" | "list") => {
+    setIsTransitioning(true);
+
     const query = { ...router.query };
 
     query.view = mode;
@@ -94,6 +102,10 @@ const useVendor = () => {
       undefined,
       { shallow: true },
     );
+
+    setTimeout(() => {
+      setIsTransitioning(false);
+    }, 300);
   };
 
   return {
@@ -108,6 +120,7 @@ const useVendor = () => {
     handleStatusChange,
     handleViewModeChange,
     viewMode: viewFromUrl,
+    isTransitioning,
   };
 };
 
