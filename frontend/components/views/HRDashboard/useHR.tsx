@@ -1,15 +1,29 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
+import { useRouter } from "next/router";
 
 import { getEventsByCompany, EventRequest } from "@/data/mockEvents";
 import { CreateEventData } from "@/components/ui/Modal/CreateEventModal";
 
 const useHR = () => {
+  const router = useRouter();
   const [events, setEvents] = useState<EventRequest[]>(
-    getEventsByCompany("TechCorp Ltd"),
+    getEventsByCompany("TechCorp Ltd")
   );
   const [selectedEvent, setSelectedEvent] = useState<EventRequest | null>(null);
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [isCreateModalOpen, setIsCreateModalOpen] = useState(false);
+  const [isTransitioning, setIsTransitioning] = useState(false);
+
+  const statusFromUrl = (router.query.status as string) || null;
+  const [statusFilter, setStatusFilter] = useState<string | null>(
+    statusFromUrl
+  );
+
+  useEffect(() => {
+    if (statusFromUrl !== statusFilter) {
+      setStatusFilter(statusFromUrl);
+    }
+  }, [statusFromUrl, statusFilter]);
 
   const handleViewEvent = (event: EventRequest) => {
     setSelectedEvent(event);
@@ -53,8 +67,40 @@ const useHR = () => {
   const approvedCount = events.filter((e) => e.status === "APPROVED").length;
   const rejectedCount = events.filter((e) => e.status === "REJECTED").length;
 
+  const filteredEvents =
+    statusFilter && statusFilter !== "ALL"
+      ? events.filter((event) => event.status === statusFilter)
+      : events;
+
+  const handleStatusChange = (status: string | null) => {
+    setIsTransitioning(true);
+    setStatusFilter(status);
+
+    const query = { ...router.query };
+
+    if (status && status !== "ALL") {
+      query.status = status;
+    } else {
+      delete query.status;
+    }
+
+    router.push(
+      {
+        pathname: router.pathname,
+        query,
+      },
+      undefined,
+      { shallow: true }
+    );
+
+    setTimeout(() => {
+      setIsTransitioning(false);
+    }, 300);
+  };
+
   return {
-    events,
+    events: filteredEvents,
+    allEventsCount: events.length,
     selectedEvent,
     isModalOpen,
     isCreateModalOpen,
@@ -65,6 +111,9 @@ const useHR = () => {
     pendingCount,
     approvedCount,
     rejectedCount,
+    statusFilter,
+    handleStatusChange,
+    isTransitioning,
   };
 };
 

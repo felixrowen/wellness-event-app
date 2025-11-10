@@ -8,15 +8,9 @@ export const SIDEBAR_HR = (handleLogout: () => void): SidebarSection[] => [
     items: [
       {
         key: "dashboard",
-        label: "Dashboard",
+        label: "Manage Events",
         href: "/hr/dashboard",
         icon: <FiHome size={20} />,
-      },
-      {
-        key: "events",
-        label: "Events",
-        href: "/hr/events",
-        icon: <FiCalendar size={20} />,
       },
     ],
   },
