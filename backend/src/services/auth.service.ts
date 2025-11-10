@@ -6,25 +6,25 @@ import { Types } from "mongoose";
 
 export class AuthService {
   async register(data: RegisterDTO) {
-    const {
-      fullName,
-      email,
-      password,
-      role,
-      companyName,
-      vendorName,
-    } = data;
+    const { fullName, email, password, role, companyName, vendorName } = data;
 
-    const user = await userRepository.create({
-      fullName,
-      email,
-      password,
-      role,
-      companyName,
-      vendorName,
-    });
+    try {
+      const user = await userRepository.create({
+        fullName,
+        email,
+        password,
+        role,
+        companyName,
+        vendorName,
+      });
 
-    return user;
+      return user;
+    } catch (error: any) {
+      if (error.code === 11000) {
+        throw new Error("Account is already registered");
+      }
+      throw error;
+    }
   }
 
   async login(data: LoginDTO) {
