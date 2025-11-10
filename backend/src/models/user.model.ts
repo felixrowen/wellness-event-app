@@ -5,7 +5,6 @@ import { ROLES } from "../constants";
 export interface IUser {
   _id?: Types.ObjectId;
   fullName: string;
-  username: string;
   email: string;
   password: string;
   role: string;
@@ -20,13 +19,6 @@ const UserSchema = new mongoose.Schema<IUser>(
     fullName: {
       type: String,
       required: true,
-      trim: true,
-    },
-    username: {
-      type: String,
-      required: true,
-      unique: true,
-      lowercase: true,
       trim: true,
     },
     email: {
