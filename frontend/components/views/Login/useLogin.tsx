@@ -2,10 +2,11 @@ import { useContext, useState } from "react";
 import * as yup from "yup";
 import { useForm } from "react-hook-form";
 import { yupResolver } from "@hookform/resolvers/yup";
-import { useMutation } from "@tanstack/react-query";
+import { signIn } from "next-auth/react";
 import { useRouter } from "next/router";
 
 import { ToasterContext } from "@/contexts/ToasterContext";
+import { ILogin } from "@/types/Auth";
 
 const loginSchema = yup.object().shape({
   email: yup
@@ -18,7 +19,7 @@ const loginSchema = yup.object().shape({
 const useLogin = () => {
   const router = useRouter();
   const [visiblePassword, setVisiblePassword] = useState(false);
-  const [userRole, setUserRole] = useState<"HR" | "VENDOR">("VENDOR");
+  const [isPendingLogin, setIsPendingLogin] = useState(false);
 
   const { setToaster } = useContext(ToasterContext);
 
@@ -30,41 +31,45 @@ const useLogin = () => {
     control,
     handleSubmit,
     formState: { errors },
-  } = useForm({
+  } = useForm<ILogin>({
     resolver: yupResolver(loginSchema),
   });
 
-  const loginService = async (payload: any) => {
-    // TODO: Implement actual login API call
-    return payload;
-  };
+  const handleLogin = async (data: ILogin) => {
+    setIsPendingLogin(true);
 
-  const { mutate: mutateLogin, isPending: isPendingLogin } = useMutation({
-    mutationFn: loginService,
-    onError: () => {
+    try {
+      const result = await signIn("credentials", {
+        identifier: data.email,
+        password: data.password,
+        redirect: false,
+      });
+
+      if (result?.error) {
+        setToaster({
+          type: "error",
+          message: "Your credential is wrong",
+        });
+        setIsPendingLogin(false);
+
+        return;
+      }
+
+      if (result?.ok) {
+        setToaster({
+          type: "success",
+          message: "Login success",
+        });
+
+        router.push("/");
+      }
+    } catch {
       setToaster({
         type: "error",
-        message: "Your credential is wrong",
+        message: "An error occurred during login",
       });
-    },
-    onSuccess: () => {
-      setToaster({
-        type: "success",
-        message: "Login success",
-      });
-      localStorage.setItem("isAuthenticated", "true");
-      localStorage.setItem("userRole", userRole);
-
-      if (userRole === "HR") {
-        router.push("/hr/dashboard");
-      } else {
-        router.push("/dashboard");
-      }
-    },
-  });
-
-  const handleLogin = (data: any) => {
-    mutateLogin(data);
+      setIsPendingLogin(false);
+    }
   };
 
   return {
@@ -75,8 +80,6 @@ const useLogin = () => {
     handleLogin,
     isPendingLogin,
     errors,
-    userRole,
-    setUserRole,
   };
 };
 
