@@ -48,4 +48,11 @@ router.put(
   eventController.rejectEvent.bind(eventController)
 );
 
+router.delete(
+  "/:id",
+  authenticate,
+  AccessControlLimit([ROLES.HR]),
+  eventController.deleteEvent.bind(eventController)
+);
+
 export default router;

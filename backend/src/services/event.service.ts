@@ -301,6 +301,37 @@ export class EventService {
       throw error;
     }
   }
+
+  async deleteEvent(
+    eventId: string,
+    userId: Types.ObjectId,
+    userRole: string
+  ): Promise<void> {
+    try {
+      const event = await eventRepository.findById(eventId);
+
+      if (!event) {
+        throw new Error("Event not found");
+      }
+
+      if (userRole !== ROLES.HR) {
+        throw new Error("Only HR can cancel events");
+      }
+
+      const companyInfoId =
+        typeof event.companyInfo === "object" && event.companyInfo._id
+          ? event.companyInfo._id.toString()
+          : event.companyInfo.toString();
+
+      if (companyInfoId !== userId.toString()) {
+        throw new Error("You are not authorized to cancel this event");
+      }
+
+      await eventRepository.deleteById(eventId);
+    } catch (error) {
+      throw error;
+    }
+  }
 }
 
 export default new EventService();

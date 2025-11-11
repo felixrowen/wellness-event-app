@@ -109,6 +109,23 @@ export class EventController {
       response.error(res, error, "Failed to reject event");
     }
   }
+
+  async deleteEvent(req: IReqUser, res: Response) {
+    try {
+      const { id } = req.params;
+      const userId = req.user?.id;
+      const userRole = req.user?.role;
+
+      if (!userId || !userRole) {
+        return response.unauthorized(res, "User not authenticated");
+      }
+
+      await eventService.deleteEvent(id, userId, userRole);
+      response.success(res, null, "Event cancelled successfully");
+    } catch (error) {
+      response.error(res, error, "Failed to cancel event");
+    }
+  }
 }
 
 export default new EventController();
