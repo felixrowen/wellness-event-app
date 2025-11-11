@@ -1,7 +1,7 @@
 import { useState } from "react";
 
 import { IEvent } from "@/types";
-import { formatDate } from "@/utils/date";
+import { formatDateFull } from "@/utils/date";
 
 interface UseApproveVendorDatesModalProps {
   event: IEvent | null;
@@ -19,7 +19,7 @@ export function useApproveVendorDatesModal({
   const formattedDates =
     event?.proposedDates?.map((date) => ({
       original: date,
-      formatted: formatDate(date),
+      formatted: formatDateFull(date),
     })) || [];
 
   const hasProposedDates = formattedDates.length > 0;
