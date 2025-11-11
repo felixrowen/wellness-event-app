@@ -3,7 +3,7 @@ import vendorService from "../services/vendor.service";
 import response from "../utils/response.util";
 
 export class VendorController {
-  async getAllVendors(req: Request, res: Response) {
+  async getAllVendors(_req: Request, res: Response) {
     try {
       const vendors = await vendorService.getAllVendors();
       response.success(

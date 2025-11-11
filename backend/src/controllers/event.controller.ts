@@ -114,11 +114,7 @@ export class EventController {
         return response.unauthorized(res, "User not authenticated");
       }
 
-      await eventService.deleteEvent(
-        req.params.id,
-        new Types.ObjectId(id),
-        role
-      );
+      await eventService.deleteEvent(req.params.id, role);
       response.success(res, null, "Event cancelled successfully");
     } catch (error) {
       response.error(res, error, "Failed to cancel event");

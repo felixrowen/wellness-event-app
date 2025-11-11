@@ -8,6 +8,7 @@ import {
 } from "../types";
 import { Types } from "mongoose";
 import { ROLES } from "../constants";
+import { IEvent } from "../models/event.model";
 
 export class EventService {
   async updateEventStatuses() {
@@ -21,11 +22,12 @@ export class EventService {
         const allDatesExpired = event.proposedDates.every(
           (date) => new Date(date) < now
         );
-
         if (allDatesExpired) {
           await eventRepository.updateById(event._id!, { status: "EXPIRED" });
         }
-      } else if (event.status === "APPROVED" && event.confirmedDate) {
+      }
+
+      if (event.status === "APPROVED" && event.confirmedDate) {
         if (new Date(event.confirmedDate) < now) {
           await eventRepository.updateById(event._id!, { status: "COMPLETE" });
         }
@@ -33,34 +35,6 @@ export class EventService {
     }
 
     return { success: true, message: "Event statuses updated" };
-  }
-
-  async checkEventStatus(eventId: string) {
-    const event = await eventRepository.findById(eventId);
-
-    if (!event) {
-      throw new Error("Event not found");
-    }
-
-    const now = new Date();
-
-    if (event.status === "PENDING") {
-      const allDatesExpired = event.proposedDates.every(
-        (date) => new Date(date) < now
-      );
-
-      if (allDatesExpired) {
-        return await eventRepository.updateById(eventId, { status: "EXPIRED" });
-      }
-    } else if (event.status === "APPROVED" && event.confirmedDate) {
-      if (new Date(event.confirmedDate) < now) {
-        return await eventRepository.updateById(eventId, {
-          status: "COMPLETE",
-        });
-      }
-    }
-
-    return event;
   }
 
   async createEvent(data: ICreateEventDTO, companyInfoId: Types.ObjectId) {
@@ -103,7 +77,7 @@ export class EventService {
   }
 
   async getEventById(eventId: string) {
-    const event = await this.checkEventStatus(eventId);
+    const event = await eventRepository.findById(eventId);
 
     if (!event) {
       throw new Error("Event not found");
@@ -119,7 +93,6 @@ export class EventService {
     userRole: string
   ) {
     const event = await eventRepository.findById(eventId);
-
     if (!event) {
       throw new Error("Event not found");
     }
@@ -127,62 +100,61 @@ export class EventService {
     const now = new Date();
 
     if (event.status === "PENDING" && userRole === ROLES.VENDOR) {
-      if (data.confirmedDate) {
-        const validDates = event.proposedDates.filter(
-          (date) => new Date(date) >= now
-        );
-
-        if (validDates.length === 0) {
-          await eventRepository.updateById(eventId, { status: "EXPIRED" });
-          throw new Error("All proposed dates have expired");
-        }
-
-        const confirmedDate = new Date(data.confirmedDate);
-        const isValidDate = event.proposedDates.some(
-          (date) => new Date(date).getTime() === confirmedDate.getTime()
-        );
-
-        if (!isValidDate) {
-          throw new Error("Confirmed date must be one of the proposed dates");
-        }
-
-        if (confirmedDate < now) {
-          throw new Error("Confirmed date must be in the future");
-        }
-
-        return await eventRepository.updateById(eventId, {
-          status: "APPROVED",
-          confirmedDate: data.confirmedDate,
-          approvedVendorId: userId,
-        });
-      }
-
-      if (data.proposedDates && data.proposedDates.length > 0) {
-        const allDatesValid = data.proposedDates.every(
-          (date: Date) => new Date(date) >= now
-        );
-
-        if (!allDatesValid) {
-          throw new Error("All proposed dates must be in the future");
-        }
-
-        return await eventRepository.updateById(eventId, {
-          status: "AWAITING_HR_APPROVAL",
-          proposedDates: data.proposedDates,
-        });
-      }
-
-      throw new Error("Either confirmed date or proposed dates are required");
+      return this.handleVendorApprovePending(event, data, userId, eventId, now);
     }
 
     if (
       event.status === "AWAITING_VENDOR_PROPOSAL" &&
       userRole === ROLES.VENDOR
     ) {
-      if (!data.proposedDates || data.proposedDates.length === 0) {
-        throw new Error("Proposed dates are required");
+      return this.handleVendorProposeDates(data, eventId, now);
+    }
+
+    if (event.status === "AWAITING_HR_APPROVAL" && userRole === ROLES.HR) {
+      return this.handleHRApproveVendorDates(event, data, eventId, now);
+    }
+
+    throw new Error("Invalid operation for current event status");
+  }
+
+  private async handleVendorApprovePending(
+    event: IEvent,
+    data: IApproveEventDTO,
+    userId: Types.ObjectId,
+    eventId: string,
+    now: Date
+  ) {
+    if (data.confirmedDate) {
+      const validDates = event.proposedDates.filter(
+        (date: Date) => new Date(date) >= now
+      );
+
+      if (validDates.length === 0) {
+        await eventRepository.updateById(eventId, { status: "EXPIRED" });
+        throw new Error("All proposed dates have expired");
       }
 
+      const confirmedDate = new Date(data.confirmedDate);
+      const isValidDate = event.proposedDates.some(
+        (date: Date) => new Date(date).getTime() === confirmedDate.getTime()
+      );
+
+      if (!isValidDate) {
+        throw new Error("Confirmed date must be one of the proposed dates");
+      }
+
+      if (confirmedDate < now) {
+        throw new Error("Confirmed date must be in the future");
+      }
+
+      return await eventRepository.updateById(eventId, {
+        status: "APPROVED",
+        confirmedDate: data.confirmedDate,
+        approvedVendorId: userId,
+      });
+    }
+
+    if (data.proposedDates && data.proposedDates.length > 0) {
       const allDatesValid = data.proposedDates.every(
         (date: Date) => new Date(date) >= now
       );
@@ -197,34 +169,62 @@ export class EventService {
       });
     }
 
-    if (event.status === "AWAITING_HR_APPROVAL" && userRole === ROLES.HR) {
-      if (!data.confirmedDate) {
-        throw new Error("Confirmed date is required");
-      }
+    throw new Error("Either confirmed date or proposed dates are required");
+  }
 
-      const confirmedDate = new Date(data.confirmedDate);
-      const isValidDate = event.proposedDates.some(
-        (date) => new Date(date).getTime() === confirmedDate.getTime()
-      );
-
-      if (!isValidDate) {
-        throw new Error(
-          "Confirmed date must be one of the vendor's proposed dates"
-        );
-      }
-
-      if (confirmedDate < now) {
-        throw new Error("Confirmed date must be in the future");
-      }
-
-      return await eventRepository.updateById(eventId, {
-        status: "APPROVED",
-        confirmedDate: data.confirmedDate,
-        approvedVendorId: event.assignedVendorId,
-      });
+  private async handleVendorProposeDates(
+    data: IApproveEventDTO,
+    eventId: string,
+    now: Date
+  ) {
+    if (!data.proposedDates || data.proposedDates.length === 0) {
+      throw new Error("Proposed dates are required");
     }
 
-    throw new Error("Invalid operation for current event status");
+    const allDatesValid = data.proposedDates.every(
+      (date: Date) => new Date(date) >= now
+    );
+
+    if (!allDatesValid) {
+      throw new Error("All proposed dates must be in the future");
+    }
+
+    return await eventRepository.updateById(eventId, {
+      status: "AWAITING_HR_APPROVAL",
+      proposedDates: data.proposedDates,
+    });
+  }
+
+  private async handleHRApproveVendorDates(
+    event: IEvent,
+    data: IApproveEventDTO,
+    eventId: string,
+    now: Date
+  ) {
+    if (!data.confirmedDate) {
+      throw new Error("Confirmed date is required");
+    }
+
+    const confirmedDate = new Date(data.confirmedDate);
+    const isValidDate = event.proposedDates.some(
+      (date: Date) => new Date(date).getTime() === confirmedDate.getTime()
+    );
+
+    if (!isValidDate) {
+      throw new Error(
+        "Confirmed date must be one of the vendor's proposed dates"
+      );
+    }
+
+    if (confirmedDate < now) {
+      throw new Error("Confirmed date must be in the future");
+    }
+
+    return await eventRepository.updateById(eventId, {
+      status: "APPROVED",
+      confirmedDate: data.confirmedDate,
+      approvedVendorId: event.assignedVendorId,
+    });
   }
 
   async rejectEvent(
@@ -234,7 +234,6 @@ export class EventService {
     userRole: string
   ) {
     const event = await eventRepository.findById(eventId);
-
     if (!event) {
       throw new Error("Event not found");
     }
@@ -257,24 +256,14 @@ export class EventService {
     throw new Error("Invalid operation for current event status");
   }
 
-  async deleteEvent(eventId: string, userId: Types.ObjectId, userRole: string) {
+  async deleteEvent(eventId: string, userRole: string) {
     const event = await eventRepository.findById(eventId);
-
     if (!event) {
       throw new Error("Event not found");
     }
 
     if (userRole !== ROLES.HR) {
       throw new Error("Only HR can cancel events");
-    }
-
-    const companyInfoId =
-      typeof event.companyInfo === "object" && event.companyInfo._id
-        ? event.companyInfo._id.toString()
-        : event.companyInfo.toString();
-
-    if (companyInfoId !== userId.toString()) {
-      throw new Error("You are not authorized to cancel this event");
     }
 
     await eventRepository.deleteById(eventId);

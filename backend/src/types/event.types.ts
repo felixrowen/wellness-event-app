@@ -1,4 +1,3 @@
-import { Types } from "mongoose";
 import { IEvent } from "../models/event.model";
 
 export interface IEventQueryOptions {
@@ -38,10 +37,4 @@ export interface IApproveEventDTO {
 
 export interface IRejectEventDTO {
   rejectionReason: string;
-}
-
-export interface IEventServiceParams {
-  userId: Types.ObjectId;
-  userRole: string;
-  queryOptions?: IEventQueryOptions;
 }
