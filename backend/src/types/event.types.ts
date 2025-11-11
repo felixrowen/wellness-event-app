@@ -26,6 +26,8 @@ export interface ICreateEventDTO {
   category: number;
   proposedDates?: Date[];
   location?: string;
+  duration?: string;
+  audience?: string;
   assignedVendorId: string;
 }
 

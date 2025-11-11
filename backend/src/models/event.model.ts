@@ -9,6 +9,8 @@ export interface IEvent {
   proposedDates: Date[];
   confirmedDate?: Date;
   location?: string;
+  duration?: string;
+  audience?: string;
   status:
     | "PENDING"
     | "APPROVED"
@@ -52,6 +54,16 @@ const EventSchema = new mongoose.Schema<IEvent>(
       default: null,
     },
     location: {
+      type: String,
+      trim: true,
+      default: null,
+    },
+    duration: {
+      type: String,
+      trim: true,
+      default: null,
+    },
+    audience: {
       type: String,
       trim: true,
       default: null,

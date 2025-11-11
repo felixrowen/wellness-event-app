@@ -146,7 +146,7 @@ export function EventDetailModal({
               </div>
             </ModalHeader>
 
-            <ModalBody className="py-6 space-y-8">
+            <ModalBody className="py-6 space-y-3">
               {isAwaitingAction && (
                 <Card className="bg-warning-50 border border-warning-200 shadow-sm">
                   <CardBody className="py-3">
@@ -278,6 +278,32 @@ export function EventDetailModal({
                     </CardBody>
                   </Card>
                 )}
+              </div>
+
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                <div>
+                  <div className="flex items-center gap-2 mb-3">
+                    <FiClock className="text-default-500" size={18} />
+                    <h4 className="text-sm font-semibold text-default-700">
+                      Duration
+                    </h4>
+                  </div>
+                  <p className="text-sm text-default-600">
+                    {event.duration || "-"}
+                  </p>
+                </div>
+
+                <div>
+                  <div className="flex items-center gap-2 mb-3">
+                    <FiUser className="text-default-500" size={18} />
+                    <h4 className="text-sm font-semibold text-default-700">
+                      Audience Size
+                    </h4>
+                  </div>
+                  <p className="text-sm text-default-600">
+                    {event.audience || "-"}
+                  </p>
+                </div>
               </div>
 
               {event.location && (

@@ -39,6 +39,8 @@ export interface IEvent {
   proposedDates: string[];
   confirmedDate?: string;
   location?: string;
+  duration?: string;
+  audience?: string;
   status: EventStatus;
   companyInfo: CompanyInfo;
   assignedVendorId: string;
@@ -54,6 +56,8 @@ export interface ICreateEventDTO {
   category: number;
   proposedDates?: string[];
   location?: string;
+  duration?: string;
+  audience?: string;
   assignedVendorId: string;
 }
 

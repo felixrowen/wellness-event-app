@@ -89,6 +89,8 @@ export class EventService {
         category: data.category,
         proposedDates: data.proposedDates || [],
         location: data.location,
+        duration: data.duration,
+        audience: data.audience,
         assignedVendorId: new Types.ObjectId(data.assignedVendorId),
         companyInfo: companyInfoId,
         status: initialStatus,

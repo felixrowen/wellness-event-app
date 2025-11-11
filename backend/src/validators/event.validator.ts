@@ -9,6 +9,8 @@ export const createEventValidator = Yup.object({
     .oneOf([1, 2, 3, 4, 5, 6], "Invalid Category"),
   proposedDates: Yup.array().of(Yup.date().required()).optional().default([]),
   location: Yup.string().trim().optional(),
+  duration: Yup.string().trim().optional(),
+  audience: Yup.string().trim().optional(),
   assignedVendorId: Yup.string().required("Assigned vendor is required"),
 });
 

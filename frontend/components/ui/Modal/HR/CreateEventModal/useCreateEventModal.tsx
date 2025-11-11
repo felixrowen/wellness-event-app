@@ -2,7 +2,7 @@ import { useForm } from "react-hook-form";
 import * as Yup from "yup";
 import { yupResolver } from "@hookform/resolvers/yup";
 
-import { EVENT_CATEGORY, ICreateEventDTO } from "@/types";
+import { ICreateEventDTO } from "@/types";
 
 const createEventSchema: Yup.ObjectSchema<ICreateEventDTO> = Yup.object({
   title: Yup.string().required("Event title is required"),
@@ -11,6 +11,8 @@ const createEventSchema: Yup.ObjectSchema<ICreateEventDTO> = Yup.object({
   assignedVendorId: Yup.string().required("Please select a vendor"),
   proposedDates: Yup.array().of(Yup.string().required()).optional(),
   location: Yup.string().optional(),
+  duration: Yup.string().optional(),
+  audience: Yup.string().optional(),
 }) as Yup.ObjectSchema<ICreateEventDTO>;
 
 interface UseCreateEventModalProps {
@@ -30,9 +32,11 @@ export function useCreateEventModal({ onSubmit }: UseCreateEventModalProps) {
     defaultValues: {
       title: "",
       description: "",
-      category: EVENT_CATEGORY.HEALTH_SCREENING,
+      category: 0,
       proposedDates: [],
       location: "",
+      duration: "",
+      audience: "",
       assignedVendorId: "",
     },
   });

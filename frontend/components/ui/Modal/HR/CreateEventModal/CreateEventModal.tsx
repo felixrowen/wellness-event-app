@@ -177,6 +177,9 @@ export function CreateEventModal({
                         granularity="second"
                         label={`Date Option ${index + 1}`}
                         minValue={today(getLocalTimeZone())}
+                        popoverProps={{
+                          placement: "top",
+                        }}
                         value={date ? parseDateTime(date) : null}
                         variant="bordered"
                         onChange={(value) => {
@@ -214,8 +217,35 @@ export function CreateEventModal({
                   render={({ field }) => (
                     <Input
                       {...field}
+                      isRequired
                       label="Location"
-                      placeholder="Enter location (optional)"
+                      placeholder="Enter location"
+                      variant="bordered"
+                    />
+                  )}
+                />
+
+                <Controller
+                  control={control}
+                  name="duration"
+                  render={({ field }) => (
+                    <Input
+                      {...field}
+                      label="Duration"
+                      placeholder="e.g., 2 hours, 1 day"
+                      variant="bordered"
+                    />
+                  )}
+                />
+
+                <Controller
+                  control={control}
+                  name="audience"
+                  render={({ field }) => (
+                    <Input
+                      {...field}
+                      label="Audience Size"
+                      placeholder="e.g., 50-100, 200-300"
                       variant="bordered"
                     />
                   )}
