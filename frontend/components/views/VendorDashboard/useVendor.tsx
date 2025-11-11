@@ -20,7 +20,7 @@ const useVendor = () => {
   const viewFromUrl = (router.query.view as "card" | "list") || "card";
 
   const [statusFilter, setStatusFilter] = useState<string | null>(
-    statusFromUrl
+    statusFromUrl,
   );
 
   useEffect(() => {
@@ -45,14 +45,14 @@ const useVendor = () => {
   const allEvents = eventsData?.events || [];
 
   const pendingCount = allEvents.filter(
-    (e) => e.status === "PENDING" || e.status === "AWAITING_VENDOR_PROPOSAL"
+    (e) => e.status === "PENDING" || e.status === "AWAITING_VENDOR_PROPOSAL",
   ).length;
   const approvedCount = allEvents.filter((e) => e.status === "APPROVED").length;
   const rejectedCount = allEvents.filter((e) => e.status === "REJECTED").length;
   const completeCount = allEvents.filter((e) => e.status === "COMPLETE").length;
   const expiredCount = allEvents.filter((e) => e.status === "EXPIRED").length;
   const awaitingApprovalCount = allEvents.filter(
-    (e) => e.status === "AWAITING_HR_APPROVAL"
+    (e) => e.status === "AWAITING_HR_APPROVAL",
   ).length;
 
   const filteredEvents =
@@ -229,7 +229,7 @@ const useVendor = () => {
         query,
       },
       undefined,
-      { shallow: true }
+      { shallow: true },
     );
 
     setTimeout(() => {
@@ -250,7 +250,7 @@ const useVendor = () => {
         query,
       },
       undefined,
-      { shallow: true }
+      { shallow: true },
     );
 
     setTimeout(() => {

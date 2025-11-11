@@ -28,7 +28,6 @@ export const Navbar: FC<NavbarProps> = ({
   userAvatar,
   onLogout,
 }) => {
-
   const handleLogout = () => {
     if (onLogout) {
       onLogout();
