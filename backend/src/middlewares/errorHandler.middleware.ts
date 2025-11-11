@@ -3,10 +3,9 @@ import responseUtil from "../utils/response.util";
 
 export const errorHandler = (
   err: Error,
-  req: Request,
+  _req: Request,
   res: Response,
-  next: NextFunction
+  _next: NextFunction
 ) => {
-  console.error("Error:", err);
   return responseUtil.error(res, err, err.message || "Internal server error");
 };

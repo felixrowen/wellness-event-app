@@ -1,3 +1,4 @@
+/* eslint-disable no-console */
 import { connectDatabase } from "./database/connection";
 import express from "express";
 import bodyParser from "body-parser";
@@ -29,15 +30,10 @@ async function init() {
     setInterval(async () => {
       try {
         await eventService.updateEventStatuses();
-        console.log("Event statuses updated");
       } catch (error) {
         console.error("Error updating event statuses:", error);
       }
     }, 60 * 60 * 1000); // 1 HR
-
-    eventService.updateEventStatuses().catch((error) => {
-      console.error("Error updating event statuses on startup:", error);
-    });
 
     app.listen(config.port, () => {
       console.log(`Server is running on http://localhost:${config.port}`);

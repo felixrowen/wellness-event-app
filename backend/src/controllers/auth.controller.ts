@@ -17,7 +17,7 @@ export class AuthController {
     try {
       const token = await authService.login(req.body);
       response.success(res, { "token": token }, "Login successful");
-    } catch (error) {
+    } catch {
       response.unauthorized(res, "Invalid credentials");
     }
   }

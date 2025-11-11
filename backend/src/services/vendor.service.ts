@@ -5,7 +5,7 @@ export class VendorService {
     try {
       const vendors = await userRepository.findAllVendors();
       return vendors;
-    } catch (error: any) {
+    } catch (error) {
       throw error;
     }
   }

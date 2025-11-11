@@ -18,7 +18,7 @@ export const authenticate = (
     const user = verifyToken(token);
     req.user = user;
     next();
-  } catch (error) {
+  } catch {
     return response.unauthorized(res, "Invalid token");
   }
 };
