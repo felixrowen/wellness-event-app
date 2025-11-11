@@ -205,9 +205,9 @@ const useVendor = () => {
       label: "Awaiting Approval",
       count: awaitingApprovalCount,
     },
-    { key: "APPROVED", label: "Approved", count: approvedCount },
+    { key: "APPROVED", label: "On Progress", count: approvedCount },
     { key: "REJECTED", label: "Rejected", count: rejectedCount },
-    { key: "COMPLETE", label: "Complete", count: completeCount },
+    { key: "COMPLETE", label: "Done", count: completeCount },
     { key: "EXPIRED", label: "Expired", count: expiredCount },
   ];
 

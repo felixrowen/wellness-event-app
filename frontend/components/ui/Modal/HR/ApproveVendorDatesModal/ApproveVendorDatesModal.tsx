@@ -84,7 +84,7 @@ export function ApproveVendorDatesModal({
                       <Radio
                         key={index}
                         classNames={{
-                          base: "inline-flex m-0 bg-default-100 hover:bg-default-200 items-center justify-between flex-row-reverse max-w-full cursor-pointer rounded-lg gap-4 p-4 border-2 border-transparent data-[selected=true]:border-success-500",
+                          base: "inline-flex hover:bg-default-200 items-center justify-between flex-row-reverse max-w-full cursor-pointer rounded-lg gap-4 p-4 border-2 border-gray-300 m-0 data-[selected=true]:border-success-500",
                         }}
                         value={dateItem.original}
                       >
@@ -117,6 +117,7 @@ export function ApproveVendorDatesModal({
                 Cancel
               </Button>
               <Button
+                className="text-default-700"
                 color="success"
                 isDisabled={!selectedDate}
                 isLoading={isLoading}

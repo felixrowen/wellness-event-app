@@ -34,6 +34,7 @@ export const EventCard: FC<EventCardProps> = ({
     formattedDate,
     formattedTime,
     categoryImage,
+    additionalDatesCount,
   } = useEventCard(event, userRole);
 
   return (
@@ -76,7 +77,7 @@ export const EventCard: FC<EventCardProps> = ({
           {event.description}
         </p>
 
-        {formattedDate && (
+        {formattedDate ? (
           <div className="flex items-center gap-1 text-sm text-default-500">
             <FiCalendar size={14} />
             <span>{formattedDate}</span>
@@ -86,6 +87,21 @@ export const EventCard: FC<EventCardProps> = ({
                 <span>{formattedTime}</span>
               </>
             )}
+            {additionalDatesCount > 0 && (
+              <Chip
+                className="ml-1"
+                color="default"
+                size="sm"
+                variant="bordered"
+              >
+                +{additionalDatesCount}
+              </Chip>
+            )}
+          </div>
+        ) : (
+          <div className="flex items-center gap-1 text-sm text-default-400 italic">
+            <FiCalendar size={14} />
+            <span>No proposed date</span>
           </div>
         )}
 

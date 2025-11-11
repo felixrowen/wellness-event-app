@@ -198,10 +198,6 @@ export class EventService {
     }
 
     if (event.status === "AWAITING_HR_APPROVAL" && userRole === ROLES.HR) {
-      if (event.companyInfo.toString() !== userId.toString()) {
-        throw new Error("You are not authorized to approve this event");
-      }
-
       if (!data.confirmedDate) {
         throw new Error("Confirmed date is required");
       }

@@ -12,8 +12,8 @@ const STATUS_COLORS: Record<string, string> = {
 export const STATUS_LABELS = {
   HR: {
     PENDING: "Waiting for vendor response",
-    APPROVED: "Approved by vendor",
-    REJECTED: "Rejected by vendor",
+    APPROVED: "Approved",
+    REJECTED: "Rejected",
     CANCELLED: "Cancelled",
     EXPIRED: "Expired - No response",
     AWAITING_VENDOR_PROPOSAL: "Awaiting vendor proposal",
@@ -23,7 +23,7 @@ export const STATUS_LABELS = {
   VENDOR: {
     PENDING: "Awaiting your action",
     APPROVED: "On Progress",
-    REJECTED: "You rejected",
+    REJECTED: "Rejected",
     CANCELLED: "Cancelled by Company",
     EXPIRED: "Expired",
     AWAITING_VENDOR_PROPOSAL: "Please propose dates",

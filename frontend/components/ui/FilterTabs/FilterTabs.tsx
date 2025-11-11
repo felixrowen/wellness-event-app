@@ -20,12 +20,24 @@ const FilterTabs: FC<FilterTabsProps> = ({
 }) => {
   const getTabTitle = (tab: FilterTab) => {
     const isAwaitingApproval = tab.key === "AWAITING_HR_APPROVAL";
+    const isApproved = tab.key === "APPROVED";
 
     if (isAwaitingApproval && tab.count > 0) {
       return (
         <div className="flex items-center gap-2">
           <span>{tab.label}</span>
           <Chip color="danger" size="sm" variant="flat">
+            {tab.count}
+          </Chip>
+        </div>
+      );
+    }
+
+    if (isApproved && tab.count > 0) {
+      return (
+        <div className="flex items-center gap-2">
+          <span>{tab.label}</span>
+          <Chip color="success" size="sm" variant="flat">
             {tab.count}
           </Chip>
         </div>

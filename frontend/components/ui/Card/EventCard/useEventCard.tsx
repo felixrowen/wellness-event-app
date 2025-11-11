@@ -4,8 +4,7 @@ import { getCategoryImage, getCategoryLabel } from "@/utils/category";
 import { getStatusColor, getStatusLabel, Role } from "@/utils/labels";
 
 export const useEventCard = (event: IEvent, role: Role) => {
-  const displayDate =
-    event.confirmedDate || event.proposedDates?.[0] || event.createdAt;
+  const displayDate = event.confirmedDate || event.proposedDates?.[0];
 
   const categoryLabel = getCategoryLabel(event.category);
   const statusColor = getStatusColor(event.status);
@@ -14,6 +13,11 @@ export const useEventCard = (event: IEvent, role: Role) => {
   const formattedDate = displayDate ? formatDate(displayDate) : null;
   const formattedTime = displayDate ? formatTime(displayDate) : null;
   const categoryImage = getCategoryImage(event.category);
+
+  const additionalDatesCount =
+    !event.confirmedDate && event.proposedDates?.length > 1
+      ? event.proposedDates.length - 1
+      : 0;
 
   return {
     categoryLabel,
@@ -24,5 +28,6 @@ export const useEventCard = (event: IEvent, role: Role) => {
     formattedTime,
     displayDate,
     categoryImage,
+    additionalDatesCount,
   };
 };

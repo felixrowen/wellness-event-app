@@ -16,10 +16,11 @@ const useHR = () => {
   const [isApproveModalOpen, setIsApproveModalOpen] = useState(false);
   const [isRejectModalOpen, setIsRejectModalOpen] = useState(false);
   const [isTransitioning, setIsTransitioning] = useState(false);
+  const [viewMode, setViewMode] = useState<"card" | "list">("card");
 
   const statusFromUrl = (router.query.status as string) || null;
   const [statusFilter, setStatusFilter] = useState<string | null>(
-    statusFromUrl
+    statusFromUrl,
   );
 
   useEffect(() => {
@@ -44,14 +45,14 @@ const useHR = () => {
   const allEvents = eventsData?.events || [];
 
   const pendingCount = allEvents.filter(
-    (e) => e.status === "PENDING" || e.status === "AWAITING_VENDOR_PROPOSAL"
+    (e) => e.status === "PENDING" || e.status === "AWAITING_VENDOR_PROPOSAL",
   ).length;
   const approvedCount = allEvents.filter((e) => e.status === "APPROVED").length;
   const rejectedCount = allEvents.filter((e) => e.status === "REJECTED").length;
   const completeCount = allEvents.filter((e) => e.status === "COMPLETE").length;
   const expiredCount = allEvents.filter((e) => e.status === "EXPIRED").length;
   const awaitingApprovalCount = allEvents.filter(
-    (e) => e.status === "AWAITING_HR_APPROVAL"
+    (e) => e.status === "AWAITING_HR_APPROVAL",
   ).length;
 
   const filteredEvents =
@@ -213,7 +214,7 @@ const useHR = () => {
 
   const handleRejectVendorDates = (
     eventId: string,
-    rejectionReason: string
+    rejectionReason: string,
   ) => {
     rejectVendorDatesMutation.mutate({ eventId, rejectionReason });
   };
@@ -226,7 +227,7 @@ const useHR = () => {
       label: "Need Approval",
       count: awaitingApprovalCount,
     },
-    { key: "APPROVED", label: "Vendor Approved", count: approvedCount },
+    { key: "APPROVED", label: "Approved", count: approvedCount },
     { key: "REJECTED", label: "Rejected", count: rejectedCount },
     { key: "COMPLETE", label: "Done", count: completeCount },
     { key: "EXPIRED", label: "Expired", count: expiredCount },
@@ -250,12 +251,16 @@ const useHR = () => {
         query,
       },
       undefined,
-      { shallow: true }
+      { shallow: true },
     );
 
     setTimeout(() => {
       setIsTransitioning(false);
     }, 300);
+  };
+
+  const handleViewModeChange = (mode: "card" | "list") => {
+    setViewMode(mode);
   };
 
   return {
@@ -279,6 +284,8 @@ const useHR = () => {
     tabs,
     statusFilter,
     handleStatusChange,
+    handleViewModeChange,
+    viewMode,
     isTransitioning: isTransitioning || isLoadingEvents,
     isCreatingEvent: createEventMutation.isPending,
     isDeletingEvent: deleteEventMutation.isPending,

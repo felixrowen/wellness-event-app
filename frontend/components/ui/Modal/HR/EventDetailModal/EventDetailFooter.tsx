@@ -25,7 +25,12 @@ export function EventDetailFooter({
   return (
     <div className="flex items-center justify-end gap-3 w-full">
       {canCancel && (
-        <Button color="danger" size="lg" variant="flat" onPress={onCancelEvent}>
+        <Button
+          color="danger"
+          size="sm"
+          variant="bordered"
+          onPress={onCancelEvent}
+        >
           Cancel Event
         </Button>
       )}
