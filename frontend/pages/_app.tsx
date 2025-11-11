@@ -4,6 +4,7 @@ import { HeroUIProvider } from "@heroui/system";
 import { ThemeProvider as NextThemesProvider } from "next-themes";
 import { useRouter } from "next/router";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
+import { SessionProvider } from "next-auth/react";
 
 import { ToasterProvider } from "@/contexts/ToasterContext";
 import { onErrorHander } from "@/libs/axios/responseHandler";
@@ -31,15 +32,17 @@ export default function App({ Component, pageProps }: AppProps) {
   });
 
   return (
-    <QueryClientProvider client={queryClient}>
-      <HeroUIProvider navigate={router.push}>
-        <NextThemesProvider attribute="class" defaultTheme="light">
-          <ToasterProvider>
-            <Component {...pageProps} />
-          </ToasterProvider>
-        </NextThemesProvider>
-      </HeroUIProvider>
-    </QueryClientProvider>
+    <SessionProvider session={pageProps.session}>
+      <QueryClientProvider client={queryClient}>
+        <HeroUIProvider navigate={router.push}>
+          <NextThemesProvider attribute="class" defaultTheme="light">
+            <ToasterProvider>
+              <Component {...pageProps} />
+            </ToasterProvider>
+          </NextThemesProvider>
+        </HeroUIProvider>
+      </QueryClientProvider>
+    </SessionProvider>
   );
 }
 
