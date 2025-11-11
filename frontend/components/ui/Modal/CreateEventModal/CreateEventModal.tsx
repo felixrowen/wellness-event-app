@@ -17,16 +17,11 @@ import {
   today,
   getLocalTimeZone,
 } from "@internationalized/date";
-import { useForm, Controller } from "react-hook-form";
-import * as Yup from "yup";
-import { yupResolver } from "@hookform/resolvers/yup";
+import { Controller } from "react-hook-form";
 
-import {
-  EVENT_CATEGORY,
-  EVENT_CATEGORY_LABELS,
-  ICreateEventDTO,
-  IVendor,
-} from "@/types";
+import { useCreateEventModal } from "./useCreateEventModal";
+
+import { EVENT_CATEGORY_LABELS, ICreateEventDTO, IVendor } from "@/types";
 
 interface CreateEventModalProps {
   isOpen: boolean;
@@ -36,15 +31,6 @@ interface CreateEventModalProps {
   vendorsData?: IVendor[];
   isLoadingVendors?: boolean;
 }
-
-const createEventSchema: Yup.ObjectSchema<ICreateEventDTO> = Yup.object({
-  title: Yup.string().required("Event title is required"),
-  description: Yup.string().required("Description is required"),
-  category: Yup.number().required("Category is required"),
-  assignedVendorId: Yup.string().required("Please select a vendor"),
-  proposedDates: Yup.array().of(Yup.string().required()).optional(),
-  location: Yup.string().optional(),
-}) as Yup.ObjectSchema<ICreateEventDTO>;
 
 export function CreateEventModal({
   isOpen,
@@ -57,55 +43,13 @@ export function CreateEventModal({
   const {
     control,
     handleSubmit,
-    reset,
-    watch,
-    setValue,
-    formState: { errors },
-  } = useForm<ICreateEventDTO>({
-    resolver: yupResolver(createEventSchema),
-    defaultValues: {
-      title: "",
-      description: "",
-      category: EVENT_CATEGORY.HEALTH_SCREENING,
-      proposedDates: [],
-      location: "",
-      assignedVendorId: "",
-    },
-  });
-
-  const proposedDates = watch("proposedDates") || [];
-
-  const handleAddProposedDate = () => {
-    if ((proposedDates?.length || 0) < 3) {
-      setValue("proposedDates", [...proposedDates, ""]);
-    }
-  };
-
-  const handleRemoveProposedDate = (index: number) => {
-    const newDates = proposedDates?.filter((_, i) => i !== index) || [];
-
-    setValue("proposedDates", newDates);
-  };
-
-  const handleProposedDateChange = (index: number, value: string) => {
-    const newDates = [...proposedDates];
-
-    newDates[index] = value;
-    setValue("proposedDates", newDates);
-  };
-
-  const onSubmitForm = (data: ICreateEventDTO) => {
-    const validDates =
-      data.proposedDates?.filter((date) => date && date.trim() !== "") || [];
-
-    const payload = {
-      ...data,
-      proposedDates: validDates.length > 0 ? validDates : undefined,
-    };
-
-    onSubmit(payload);
-    reset();
-  };
+    errors,
+    proposedDates,
+    handleAddProposedDate,
+    handleRemoveProposedDate,
+    handleProposedDateChange,
+    onSubmitForm,
+  } = useCreateEventModal({ onSubmit });
 
   return (
     <Modal isOpen={isOpen} size="2xl" onClose={onClose}>
