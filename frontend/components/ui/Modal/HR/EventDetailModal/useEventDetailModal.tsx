@@ -65,17 +65,29 @@ export function useEventDetailModal({
     return event?.status === "REJECTED" && !!event.rejectionReason;
   }, [event]);
 
-  const isAwaitingAction = useMemo(() => {
-    if (!event) return false;
-
-    if (viewMode === "hr") {
-      return event.status === "AWAITING_HR_APPROVAL";
-    }
+  const canCancel = useMemo(() => {
+    if (viewMode !== "hr" || !event) return false;
 
     return (
-      event.status === "PENDING" || event.status === "AWAITING_VENDOR_PROPOSAL"
+      event.status !== "COMPLETE" &&
+      event.status !== "EXPIRED" &&
+      event.status !== "REJECTED"
     );
-  }, [event, viewMode]);
+  }, [viewMode, event]);
+
+  const showVendorPendingActions = useMemo(() => {
+    return viewMode === "vendor" && event?.status === "PENDING";
+  }, [viewMode, event]);
+
+  const showVendorProposalActions = useMemo(() => {
+    return (
+      viewMode === "vendor" && event?.status === "AWAITING_VENDOR_PROPOSAL"
+    );
+  }, [viewMode, event]);
+
+  const showHrApprovalActions = useMemo(() => {
+    return viewMode === "hr" && event?.status === "AWAITING_HR_APPROVAL";
+  }, [viewMode, event]);
 
   const handleCopyId = async () => {
     if (!event?._id) return;
@@ -91,7 +103,10 @@ export function useEventDetailModal({
     formattedDates,
     formattedCreatedDate,
     hasRejectionReason,
-    isAwaitingAction,
+    canCancel,
+    showVendorPendingActions,
+    showVendorProposalActions,
+    showHrApprovalActions,
     handleCopyId,
     copiedId,
   };
