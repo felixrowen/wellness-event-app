@@ -149,11 +149,9 @@ export function EventDetailModal({
                       </h4>
                     </div>
                     {formattedCreatedDate && (
-                      <div className="flex items-center gap-2 text-sm text-default-700 mt-3">
-                        <p>{formattedCreatedDate.date}</p>
-                        <span className="text-default-400">•</span>
-                        <p>{formattedCreatedDate.time}</p>
-                      </div>
+                      <p className="text-sm text-default-700 mt-3">
+                        {formattedCreatedDate}
+                      </p>
                     )}
                   </div>
                 </div>

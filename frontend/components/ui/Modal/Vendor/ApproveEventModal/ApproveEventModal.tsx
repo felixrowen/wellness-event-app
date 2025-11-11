@@ -12,6 +12,7 @@ import { useState } from "react";
 import { FiCalendar, FiCheck } from "react-icons/fi";
 
 import { IEvent } from "@/types";
+import { formatDateFull } from "@/utils/date";
 
 interface ApproveEventModalProps {
   event: IEvent | null;
@@ -41,19 +42,6 @@ export function ApproveEventModal({
     onClose();
   };
 
-  const formatDate = (dateString: string): string => {
-    const date = new Date(dateString);
-
-    return date.toLocaleDateString("en-US", {
-      weekday: "long",
-      month: "long",
-      day: "numeric",
-      year: "numeric",
-      hour: "2-digit",
-      minute: "2-digit",
-    });
-  };
-
   if (!event) return null;
 
   return (
@@ -68,25 +56,27 @@ export function ApproveEventModal({
             <ModalBody>
               <div className="space-y-4">
                 <div>
-                  <p className="text-sm text-default-600 mb-2">
+                  <p className="text-sm text-default-600">
                     Select a date to confirm for this event:
                   </p>
-                  <h3 className="text-lg font-semibold text-default-900">
+                  <span className="font-semibold text-default-900">
                     {event.title}
-                  </h3>
+                  </span>
                 </div>
 
                 {event.proposedDates && event.proposedDates.length > 0 ? (
                   <RadioGroup
-                    label="Choose a date"
+                    label="Choose a date:"
                     value={selectedDate}
                     onValueChange={setSelectedDate}
                   >
                     {event.proposedDates.map((date) => (
                       <Radio key={date} value={date}>
-                        <div className="flex items-center gap-2">
-                          <FiCalendar size={16} />
-                          <span>{formatDate(date)}</span>
+                        <div className="flex items-center gap-1">
+                          <FiCalendar size={14} />
+                          <span className="text-sm">
+                            {formatDateFull(date)}
+                          </span>
                         </div>
                       </Radio>
                     ))}
@@ -106,6 +96,7 @@ export function ApproveEventModal({
                 Cancel
               </Button>
               <Button
+                className="text-default-700"
                 color="success"
                 isDisabled={!selectedDate || isLoading}
                 isLoading={isLoading}

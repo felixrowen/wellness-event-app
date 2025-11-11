@@ -71,7 +71,7 @@ export const Banner: FC<BannerProps> = ({
   return (
     <div className={`${styles.bg} border ${styles.border} rounded-lg p-4`}>
       <div className="flex items-start gap-3">
-        <div className={`${styles.iconColor} text-xl mt-0.5 flex-shrink-0`}>
+        <div className={`${styles.iconColor} text-xl mt-4 flex-shrink-0`}>
           {displayIcon}
         </div>
         <div>

@@ -1,16 +1,14 @@
 import { Card, CardBody } from "@heroui/react";
-import { FiCalendar, FiClock } from "react-icons/fi";
+import { FiCalendar } from "react-icons/fi";
 
 interface EventDetailDateProps {
   formattedDates: {
     confirmed: {
-      date: string;
-      time: string;
+      formatted: string;
       full: string;
     } | null;
     proposed: Array<{
-      date: string;
-      time: string;
+      formatted: string;
       full: string;
     }>;
   };
@@ -36,27 +34,19 @@ export function EventDetailDate({ formattedDates }: EventDetailDateProps) {
                 <FiCalendar className="text-success-700" size={20} />
               </div>
               <div>
-                <p className="font-semibold text-success-800 text-lg">
-                  {formattedDates.confirmed.date}
-                </p>
-                <p className="text-sm text-success-700 flex items-center gap-1">
-                  <FiClock size={14} />
-                  {formattedDates.confirmed.time}
+                <p className="font-semibold text-success-800 text-base">
+                  {formattedDates.confirmed.formatted}
                 </p>
               </div>
             </div>
           </CardBody>
         </Card>
       ) : formattedDates.proposed.length > 0 ? (
-        <div className="space-y-3">
+        <div className="space-y-2">
           {formattedDates.proposed.map((proposedDate, index) => (
-            <div
-              key={index}
-              className="flex justify-between items-center p-2 rounded border border-default-200 bg-default-50"
-            >
-              <p className="text-sm text-default-700">{proposedDate.date}</p>
-              <p className="text-sm text-default-700 flex items-center gap-1">
-                {proposedDate.time}
+            <div key={index} className="p-3 rounded border border-default-200">
+              <p className="text-sm text-default-700">
+                {proposedDate.formatted}
               </p>
             </div>
           ))}

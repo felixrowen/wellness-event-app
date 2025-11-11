@@ -33,8 +33,17 @@ export function EventDetailFooter({
       {showVendorPendingActions && (
         <>
           <Button
+            color="primary"
+            size="sm"
+            startContent={<FiCalendar size={18} />}
+            onPress={onOpenPropose}
+          >
+            Propose New Dates
+          </Button>
+          <Button
+            className="text-default-700"
             color="success"
-            size="lg"
+            size="sm"
             startContent={<FiCheck size={18} />}
             onPress={onOpenApprove}
           >
@@ -42,20 +51,12 @@ export function EventDetailFooter({
           </Button>
           <Button
             color="danger"
-            size="lg"
+            size="sm"
             startContent={<FiX size={18} />}
             variant="flat"
             onPress={onOpenReject}
           >
             Reject
-          </Button>
-          <Button
-            color="primary"
-            size="lg"
-            startContent={<FiCalendar size={18} />}
-            onPress={onOpenPropose}
-          >
-            Propose New Dates
           </Button>
         </>
       )}
@@ -64,7 +65,7 @@ export function EventDetailFooter({
         <>
           <Button
             color="primary"
-            size="lg"
+            size="sm"
             startContent={<FiCalendar size={18} />}
             onPress={onOpenPropose}
           >
@@ -72,7 +73,7 @@ export function EventDetailFooter({
           </Button>
           <Button
             color="danger"
-            size="lg"
+            size="sm"
             startContent={<FiX size={18} />}
             variant="flat"
             onPress={onOpenReject}
@@ -85,8 +86,9 @@ export function EventDetailFooter({
       {showHrApprovalActions && (
         <>
           <Button
+            className="text-default-700"
             color="success"
-            size="lg"
+            size="sm"
             startContent={<FiCheck size={18} />}
             onPress={onOpenApprove}
           >
@@ -94,7 +96,7 @@ export function EventDetailFooter({
           </Button>
           <Button
             color="danger"
-            size="lg"
+            size="sm"
             startContent={<FiX size={18} />}
             variant="flat"
             onPress={onOpenReject}

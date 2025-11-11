@@ -8,8 +8,9 @@ import {
   Textarea,
 } from "@heroui/react";
 import { useState } from "react";
-import { FiX, FiAlertCircle } from "react-icons/fi";
+import { FiX } from "react-icons/fi";
 
+import { Banner } from "@/components/ui/Banner";
 import { IEvent } from "@/types";
 
 interface RejectEventModalProps {
@@ -53,27 +54,25 @@ export function RejectEventModal({
             </ModalHeader>
             <ModalBody>
               <div className="space-y-4">
-                <div className="bg-danger-50 border border-danger-200 rounded-lg p-4">
-                  <div className="flex items-start gap-3">
-                    <FiAlertCircle className="text-danger-600 text-xl mt-0.5 flex-shrink-0" />
-                    <div>
-                      <p className="font-semibold text-danger-900">
-                        You are about to reject this event
-                      </p>
-                      <p className="text-sm text-danger-700 mt-1">
-                        Please provide a reason for the rejection.
-                      </p>
-                    </div>
-                  </div>
-                </div>
+                <Banner
+                  description="Please provide a reason for the rejection."
+                  title="You are about to reject this event"
+                  variant="danger"
+                />
 
                 <div>
-                  <h3 className="text-lg font-semibold text-default-900 mb-2">
-                    {event.title}
-                  </h3>
-                  <p className="text-sm text-default-600">
-                    {event.description}
-                  </p>
+                  <div>
+                    <span className="text-sm">Title:</span>
+                    <h3 className="text-sm font-semibold text-default-900 mb-2">
+                      {event.title}
+                    </h3>
+                  </div>
+                  <div>
+                    <span className="text-sm">Description:</span>
+                    <p className="text-sm text-default-600 line-clamp-2">
+                      {event.description}
+                    </p>
+                  </div>
                 </div>
 
                 <Textarea

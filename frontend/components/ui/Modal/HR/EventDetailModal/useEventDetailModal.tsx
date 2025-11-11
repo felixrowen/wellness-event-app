@@ -2,7 +2,7 @@ import { useMemo, useState } from "react";
 
 import { IEvent, EVENT_CATEGORY_LABELS, EVENT_CATEGORY } from "@/types";
 import { Role, getStatusLabel, getStatusColor } from "@/utils/labels";
-import { formatDate, formatTime } from "@/utils/date";
+import { formatDateFull } from "@/utils/date";
 
 interface UseEventDetailModalProps {
   event: IEvent | null;
@@ -36,15 +36,13 @@ export function useEventDetailModal({
     if (!event) return { proposed: [], confirmed: null };
 
     const proposed = event.proposedDates.map((date) => ({
-      date: formatDate(date),
-      time: formatTime(date),
+      formatted: formatDateFull(date),
       full: date,
     }));
 
     const confirmed = event.confirmedDate
       ? {
-          date: formatDate(event.confirmedDate),
-          time: formatTime(event.confirmedDate),
+          formatted: formatDateFull(event.confirmedDate),
           full: event.confirmedDate,
         }
       : null;
@@ -55,10 +53,7 @@ export function useEventDetailModal({
   const formattedCreatedDate = useMemo(() => {
     if (!event?.createdAt) return null;
 
-    return {
-      date: formatDate(event.createdAt),
-      time: formatTime(event.createdAt),
-    };
+    return formatDateFull(event.createdAt);
   }, [event]);
 
   const hasRejectionReason = useMemo(() => {
