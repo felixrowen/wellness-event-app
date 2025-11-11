@@ -3,7 +3,7 @@ import Login from "@/components/views/Login";
 
 export default function LoginPage() {
   return (
-    <AuthLayout>
+    <AuthLayout title="Wellness | Login">
       <Login />
     </AuthLayout>
   );

@@ -1,3 +1,5 @@
+import endpoint from "./endpoint.constant";
+
 import axiosInstance from "@/libs/axios/instance";
 import { IVendorListResponse } from "@/types/Vendor";
 
@@ -7,7 +9,9 @@ const vendorServices = {
     page?: number;
     limit?: number;
   }) => {
-    return axiosInstance.get<IVendorListResponse>("/vendors", { params });
+    return axiosInstance.get<IVendorListResponse>(endpoint.VENDORS, {
+      params,
+    });
   },
 };
 

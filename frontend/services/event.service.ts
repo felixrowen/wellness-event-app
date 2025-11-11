@@ -1,3 +1,5 @@
+import endpoint from "./endpoint.constant";
+
 import axiosInstance from "@/libs/axios/instance";
 import {
   ICreateEventDTO,
@@ -10,7 +12,7 @@ import {
 
 const eventServices = {
   createEvent: async (data: ICreateEventDTO) => {
-    return axiosInstance.post<IEventResponse<IEvent>>("/events", data);
+    return axiosInstance.post<IEventResponse<IEvent>>(endpoint.EVENTS, data);
   },
 
   getEvents: async (params?: {
@@ -22,31 +24,35 @@ const eventServices = {
     limit?: number;
   }) => {
     return axiosInstance.get<IEventResponse<IPaginatedEventsResponse>>(
-      "/events",
+      endpoint.EVENTS,
       { params },
     );
   },
 
   getEventById: async (id: string) => {
-    return axiosInstance.get<IEventResponse<IEvent>>(`/events/${id}`);
+    return axiosInstance.get<IEventResponse<IEvent>>(
+      `${endpoint.EVENTS}/${id}`,
+    );
   },
 
   approveEvent: async (id: string, data: IApproveEventDTO) => {
     return axiosInstance.put<IEventResponse<IEvent>>(
-      `/events/${id}/approve`,
+      `${endpoint.EVENTS}/${id}/approve`,
       data,
     );
   },
 
   rejectEvent: async (id: string, data: IRejectEventDTO) => {
     return axiosInstance.put<IEventResponse<IEvent>>(
-      `/events/${id}/reject`,
+      `${endpoint.EVENTS}/${id}/reject`,
       data,
     );
   },
 
   deleteEvent: async (id: string) => {
-    return axiosInstance.delete<IEventResponse<null>>(`/events/${id}`);
+    return axiosInstance.delete<IEventResponse<null>>(
+      `${endpoint.EVENTS}/${id}`,
+    );
   },
 };
 

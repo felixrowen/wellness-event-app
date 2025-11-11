@@ -35,7 +35,7 @@ export function ProposeNewDatesModal({
   const [proposedDates, setProposedDates] = useState<string[]>([""]);
 
   const handleAddDate = () => {
-    if (proposedDates.length < 5) {
+    if (proposedDates.length < 3) {
       setProposedDates([...proposedDates, ""]);
     }
   };

@@ -32,5 +32,5 @@ export const getCategoryLabel = (category: number): string => {
     6: "Health Talk & Education",
   };
 
-  return categoryLabels[category] || "Unknown";
+  return categoryLabels[category];
 };

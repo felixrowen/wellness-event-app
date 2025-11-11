@@ -40,7 +40,7 @@ export function getStatusLabel(role: Role, status: string) {
 }
 
 export function getStatusColor(
-  status: string
+  status: string,
 ): "warning" | "success" | "danger" | "default" {
   const color = STATUS_COLORS[status] || "gray";
 
@@ -55,39 +55,5 @@ export function getStatusColor(
       return "default";
     default:
       return "default";
-  }
-}
-
-export function getStatusBgColor(status: string): string {
-  const color = STATUS_COLORS[status] || "gray";
-
-  switch (color) {
-    case "yellow":
-      return "bg-yellow-500";
-    case "green":
-      return "bg-green-500";
-    case "red":
-      return "bg-red-500";
-    case "blue":
-      return "bg-blue-500";
-    default:
-      return "bg-gray-500";
-  }
-}
-
-export function getStatusTextColor(status: string): string {
-  const color = STATUS_COLORS[status] || "gray";
-
-  switch (color) {
-    case "yellow":
-      return "text-yellow-700";
-    case "green":
-      return "text-green-700";
-    case "red":
-      return "text-red-700";
-    case "blue":
-      return "text-blue-700";
-    default:
-      return "text-gray-700";
   }
 }
