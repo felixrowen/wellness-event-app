@@ -1,10 +1,11 @@
 import mongoose, { Types } from "mongoose";
+import { EVENT_CATEGORY } from "../constants";
 
 export interface IEvent {
   _id?: Types.ObjectId;
   title: string;
   description: string;
-  category: 1 | 2 | 3 | 4 | 5 | 6;
+  category: EVENT_CATEGORY;
   proposedDates: Date[];
   confirmedDate?: Date;
   location?: string;
@@ -38,7 +39,7 @@ const EventSchema = new mongoose.Schema<IEvent>(
     },
     category: {
       type: Number,
-      enum: [1, 2, 3, 4, 5, 6],
+      enum: Object.values(EVENT_CATEGORY),
       required: true,
     },
     proposedDates: {
