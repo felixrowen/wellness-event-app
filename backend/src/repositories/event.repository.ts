@@ -1,5 +1,6 @@
 import EventModel, { IEvent } from "../models/event.model";
 import { Types } from "mongoose";
+import { IEventQueryOptions, IPaginatedEventsResult } from "../types";
 
 export class EventRepository {
   async create(eventData: Partial<IEvent>): Promise<IEvent> {
@@ -13,12 +14,71 @@ export class EventRepository {
       .populate("approvedVendorId", "fullName email vendorName");
   }
 
-  async findAll(filter: any = {}): Promise<IEvent[]> {
+  async findAll(filter = {}): Promise<IEvent[]> {
     return EventModel.find(filter)
       .populate("hrId", "fullName email companyName")
       .populate("assignedVendorId", "fullName email vendorName")
       .populate("approvedVendorId", "fullName email vendorName")
       .sort({ createdAt: -1 });
+  }
+
+  async findWithOptions(
+    options: IEventQueryOptions
+  ): Promise<IPaginatedEventsResult> {
+    const {
+      filter = {},
+      search,
+      status,
+      from,
+      to,
+      page = 1,
+      limit = 10,
+    } = options;
+
+    const query = { ...filter };
+
+    if (search) {
+      query.$or = [
+        { title: { $regex: search, $options: "i" } },
+        { description: { $regex: search, $options: "i" } },
+      ];
+    }
+
+    if (status) {
+      query.status = status;
+    }
+
+    if (from || to) {
+      query.confirmedDate = {} as any;
+      if (from) {
+        (query.confirmedDate as any).$gte = new Date(from);
+      }
+      if (to) {
+        (query.confirmedDate as any).$lte = new Date(to);
+      }
+    }
+
+    const skip = (page - 1) * limit;
+
+    const [events, total] = await Promise.all([
+      EventModel.find(query)
+        .populate("hrId", "fullName email companyName")
+        .populate("assignedVendorId", "fullName email vendorName")
+        .populate("approvedVendorId", "fullName email vendorName")
+        .sort({ createdAt: -1 })
+        .skip(skip)
+        .limit(limit),
+      EventModel.countDocuments(query),
+    ]);
+
+    return {
+      events,
+      pagination: {
+        total,
+        current: page,
+        totalPages: Math.ceil(total / limit),
+      },
+    };
   }
 
   async findByHrId(hrId: string | Types.ObjectId): Promise<IEvent[]> {

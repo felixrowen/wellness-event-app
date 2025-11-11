@@ -1,10 +1,11 @@
 import eventRepository from "../repositories/event.repository";
 import {
-  CreateEventDTO,
-  ApproveEventDTO,
-  RejectEventDTO,
-} from "../validators/event.validator";
-import { IEvent } from "../models/event.model";
+  ICreateEventDTO,
+  IApproveEventDTO,
+  IRejectEventDTO,
+  IEventQueryOptions,
+  IPaginatedEventsResult,
+} from "../types";
 import { Types } from "mongoose";
 import { ROLES } from "../constants";
 
@@ -38,7 +39,7 @@ export class EventService {
       }
 
       return { success: true, message: "Event statuses updated" };
-    } catch (error: any) {
+    } catch (error) {
       throw error;
     }
   }
@@ -72,12 +73,12 @@ export class EventService {
       }
 
       return event;
-    } catch (error: any) {
+    } catch (error) {
       throw error;
     }
   }
 
-  async createEvent(data: CreateEventDTO, hrId: Types.ObjectId) {
+  async createEvent(data: ICreateEventDTO, hrId: Types.ObjectId) {
     try {
       const hasDates = data.proposedDates && data.proposedDates.length > 0;
       const initialStatus = hasDates ? "PENDING" : "AWAITING_VENDOR_PROPOSAL";
@@ -93,35 +94,34 @@ export class EventService {
       });
 
       return event;
-    } catch (error: any) {
+    } catch (error) {
       throw error;
     }
   }
 
-  async getEvents(userId: Types.ObjectId, userRole: string) {
+  async getEvents(
+    userId: Types.ObjectId,
+    userRole: string,
+    queryOptions: IEventQueryOptions = {}
+  ): Promise<IPaginatedEventsResult> {
     try {
-      let events: IEvent[] = [];
+      const baseFilter: Record<string, Types.ObjectId> = {};
 
       if (userRole === ROLES.HR) {
-        events = await eventRepository.findByHrId(userId);
+        baseFilter.hrId = userId;
       } else if (userRole === ROLES.VENDOR) {
-        events = await eventRepository.findAll({
-          assignedVendorId: userId,
-        });
+        baseFilter.assignedVendorId = userId;
       }
 
       await this.updateEventStatuses();
 
-      if (userRole === ROLES.HR) {
-        events = await eventRepository.findByHrId(userId);
-      } else if (userRole === ROLES.VENDOR) {
-        events = await eventRepository.findAll({
-          assignedVendorId: userId,
-        });
-      }
+      const result = await eventRepository.findWithOptions({
+        ...queryOptions,
+        filter: baseFilter,
+      });
 
-      return events;
-    } catch (error: any) {
+      return result;
+    } catch (error) {
       throw error;
     }
   }
@@ -135,14 +135,14 @@ export class EventService {
       }
 
       return event;
-    } catch (error: any) {
+    } catch (error) {
       throw error;
     }
   }
 
   async approveEvent(
     eventId: string | Types.ObjectId,
-    data: ApproveEventDTO,
+    data: IApproveEventDTO,
     userId: Types.ObjectId,
     userRole: string
   ) {
@@ -204,7 +204,7 @@ export class EventService {
         }
 
         const allDatesValid = data.proposedDates.every(
-          (date) => new Date(date) >= now
+          (date: Date) => new Date(date) >= now
         );
 
         if (!allDatesValid) {
@@ -250,14 +250,14 @@ export class EventService {
       }
 
       throw new Error("Invalid operation for current event status");
-    } catch (error: any) {
+    } catch (error) {
       throw error;
     }
   }
 
   async rejectEvent(
     eventId: string | Types.ObjectId,
-    data: RejectEventDTO,
+    data: IRejectEventDTO,
     userId: Types.ObjectId,
     userRole: string
   ) {
@@ -296,7 +296,7 @@ export class EventService {
       }
 
       throw new Error("Invalid operation for current event status");
-    } catch (error: any) {
+    } catch (error) {
       throw error;
     }
   }

@@ -14,4 +14,7 @@ export interface IPaginationQuery {
   page: number;
   limit: number;
   search?: string;
+  status?: string;
+  from?: string;
+  to?: string;
 }

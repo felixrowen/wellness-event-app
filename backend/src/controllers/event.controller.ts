@@ -28,8 +28,29 @@ export class EventController {
         return response.unauthorized(res, "User not authenticated");
       }
 
-      const events = await eventService.getEvents(userId, userRole);
-      response.success(res, events, "Events retrieved successfully");
+      const { search, status, from, to, page = "1", limit = "10" } = req.query;
+
+      const queryOptions = {
+        search: search as string,
+        status: status as string,
+        from: from as string,
+        to: to as string,
+        page: parseInt(page as string, 10),
+        limit: parseInt(limit as string, 10),
+      };
+
+      const result = await eventService.getEvents(
+        userId,
+        userRole,
+        queryOptions
+      );
+
+      response.pagination(
+        res,
+        result.events,
+        result.pagination,
+        "Events retrieved successfully"
+      );
     } catch (error) {
       response.error(res, error, "Failed to retrieve events");
     }
