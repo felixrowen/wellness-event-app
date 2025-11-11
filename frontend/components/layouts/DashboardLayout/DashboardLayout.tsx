@@ -1,16 +1,12 @@
-import { ReactNode, useState } from "react";
+import { ReactNode } from "react";
 import { Button } from "@heroui/react";
 import { FiMenu, FiX } from "react-icons/fi";
-import { useRouter } from "next/router";
-import { signOut, useSession } from "next-auth/react";
 
-import { SIDEBAR_HR, SIDEBAR_VENDOR } from "./DashboardLayout.constants";
+import { useDashboardLayout } from "./useDashboardLayout";
 
 import { Sidebar, SidebarSection } from "@/components/ui/Sidebar";
-import { Logo } from "@/components/icons";
 import { Navbar } from "@/components/ui/Navbar";
 import { PageHead } from "@/components/layouts/head";
-import { SessionExtended } from "@/types/Auth";
 
 export interface DashboardLayoutProps {
   children: ReactNode;
@@ -27,52 +23,17 @@ const DashboardLayout = ({
   type = "vendor",
   sidebarSections,
 }: DashboardLayoutProps) => {
-  const router = useRouter();
-  const { data: session } = useSession() as { data: SessionExtended | null };
-  const [collapsed, setCollapsed] = useState(false);
-  const [mobileOpen, setMobileOpen] = useState(false);
-
-  const handleLogout = async () => {
-    await signOut({ redirect: false });
-    router.push("/auth/login");
-  };
-
-  const sections =
-    sidebarSections ||
-    (type === "hr" ? SIDEBAR_HR(handleLogout) : SIDEBAR_VENDOR(handleLogout));
-
-  const sidebarHeader = (
-    <div className="flex items-center gap-3">
-      <Logo size={32} />
-      {!collapsed && (
-        <div className="flex flex-col">
-          <span className="font-bold text-lg">Wellness Events</span>
-          <span className="text-xs text-default-500">
-            {type === "hr" ? "HR Portal" : "Vendor Portal"}
-          </span>
-        </div>
-      )}
-    </div>
-  );
-
-  const sidebarFooter = null;
-
-  const navbarConfig = {
-    hr: {
-      title: "HR Admin Dashboard",
-      userName: session?.user?.fullName,
-      userEmail: session?.user?.email,
-      userAvatar: "https://i.pravatar.cc/150?u=hradmin",
-    },
-    vendor: {
-      title: "Vendor Dashboard",
-      userName: session?.user?.fullName,
-      userEmail: session?.user?.email,
-      userAvatar: "https://i.pravatar.cc/150?u=vendor",
-    },
-  };
-
-  const config = navbarConfig[type];
+  const {
+    collapsed,
+    setCollapsed,
+    mobileOpen,
+    setMobileOpen,
+    handleLogout,
+    sections,
+    sidebarHeader,
+    sidebarFooter,
+    config,
+  } = useDashboardLayout({ type, sidebarSections });
 
   return (
     <>

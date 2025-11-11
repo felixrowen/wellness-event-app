@@ -73,12 +73,7 @@ const useRegister = () => {
   const selectedRole = watch("role");
 
   const registerService = async (payload: IRegister) => {
-    // eslint-disable-next-line no-console
-    console.log("Registering with payload:", payload);
     const response = await authServices.register(payload);
-
-    // eslint-disable-next-line no-console
-    console.log("Registration response:", response);
 
     return response.data;
   };
@@ -86,11 +81,6 @@ const useRegister = () => {
   const { mutate: mutateRegister, isPending: isPendingRegister } = useMutation({
     mutationFn: registerService,
     onError: (error: AxiosError<{ message: string }>) => {
-      // eslint-disable-next-line no-console
-      console.error("Registration error:", error);
-      // eslint-disable-next-line no-console
-      console.error("Error response:", error.response);
-
       const errorMessage =
         error.response?.data?.message || error.message || "Registration failed";
 
