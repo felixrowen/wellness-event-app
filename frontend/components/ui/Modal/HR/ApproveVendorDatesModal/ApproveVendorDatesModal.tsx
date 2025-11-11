@@ -11,7 +11,8 @@ import {
   CardBody,
 } from "@heroui/react";
 import { FiCheck, FiCalendar } from "react-icons/fi";
-import { useState } from "react";
+
+import { useApproveVendorDatesModal } from "./useApproveVendorDatesModal";
 
 import { IEvent } from "@/types";
 
@@ -30,31 +31,14 @@ export function ApproveVendorDatesModal({
   onApprove,
   isLoading = false,
 }: ApproveVendorDatesModalProps) {
-  const [selectedDate, setSelectedDate] = useState<string>("");
-
-  const handleApprove = () => {
-    if (!event?._id || !selectedDate) return;
-    onApprove(event._id, selectedDate);
-  };
-
-  const handleClose = () => {
-    setSelectedDate("");
-    onClose();
-  };
-
-  const formatDate = (dateString: string) => {
-    const date = new Date(dateString);
-    const options: Intl.DateTimeFormatOptions = {
-      weekday: "long",
-      year: "numeric",
-      month: "long",
-      day: "numeric",
-      hour: "2-digit",
-      minute: "2-digit",
-    };
-
-    return date.toLocaleDateString("en-US", options);
-  };
+  const {
+    selectedDate,
+    setSelectedDate,
+    formattedDates,
+    hasProposedDates,
+    handleApprove,
+    handleClose,
+  } = useApproveVendorDatesModal({ event, onApprove, onClose });
 
   if (!event) return null;
 
@@ -90,23 +74,23 @@ export function ApproveVendorDatesModal({
                   </CardBody>
                 </Card>
 
-                {event.proposedDates && event.proposedDates.length > 0 ? (
+                {hasProposedDates ? (
                   <RadioGroup
                     label="Select a date to approve"
                     value={selectedDate}
                     onValueChange={setSelectedDate}
                   >
-                    {event.proposedDates.map((date, index) => (
+                    {formattedDates.map((dateItem, index) => (
                       <Radio
                         key={index}
                         classNames={{
                           base: "inline-flex m-0 bg-default-100 hover:bg-default-200 items-center justify-between flex-row-reverse max-w-full cursor-pointer rounded-lg gap-4 p-4 border-2 border-transparent data-[selected=true]:border-success-500",
                         }}
-                        value={date}
+                        value={dateItem.original}
                       >
                         <div className="flex flex-col gap-1">
                           <p className="text-sm font-semibold text-default-900">
-                            {formatDate(date)}
+                            {dateItem.formatted}
                           </p>
                         </div>
                       </Radio>
