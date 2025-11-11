@@ -31,3 +31,16 @@ export const getStatusColor = (
       return "default";
   }
 };
+
+export const getCategoryLabel = (category: number): string => {
+  const categoryLabels: Record<number, string> = {
+    1: "Health Screening",
+    2: "Mental Wellness",
+    3: "Fitness & Exercise",
+    4: "Diet & Nutrition",
+    5: "Work-Life Balance",
+    6: "Health Talk & Education",
+  };
+
+  return categoryLabels[category] || "Unknown";
+};

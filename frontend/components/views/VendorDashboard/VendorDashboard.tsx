@@ -1,20 +1,38 @@
-import { useState } from "react";
 import { Button, ButtonGroup, Skeleton, Card } from "@heroui/react";
 import { FiGrid, FiList } from "react-icons/fi";
 
 import useVendor from "./useVendor";
 
 import { EventCard } from "@/components/ui/Card/EventCard";
+import { EventDetailModal } from "@/components/ui/Modal/HR/EventDetailModal";
+import { ApproveEventModal } from "@/components/ui/Modal/Vendor/ApproveEventModal";
+import { RejectEventModal } from "@/components/ui/Modal/Vendor/RejectEventModal";
+import { ProposeNewDatesModal } from "@/components/ui/Modal/Vendor/ProposeNewDatesModal";
 import FilterTabs from "@/components/ui/FilterTabs";
 import EventTable from "@/components/ui/Table/EventTable";
 
 const VendorDashboard = () => {
-  const [isLoading] = useState(false);
-
   const {
     events,
-    handleApprove,
-    handleReject,
+    selectedEvent,
+    isModalOpen,
+    isApproveModalOpen,
+    isRejectModalOpen,
+    isProposeModalOpen,
+    handleViewEvent,
+    handleCloseModal,
+    handleOpenApprove,
+    handleOpenReject,
+    handleOpenPropose,
+    handleCloseApproveModal,
+    handleCloseRejectModal,
+    handleCloseProposeModal,
+    handleApproveEvent,
+    handleRejectEvent,
+    handleProposeNewDates,
+    isApprovingEvent,
+    isRejectingEvent,
+    isProposingDates,
     tabs,
     statusFilter,
     handleStatusChange,
@@ -22,10 +40,6 @@ const VendorDashboard = () => {
     viewMode,
     isTransitioning,
   } = useVendor();
-
-  if (isLoading) {
-    return null;
-  }
 
   return (
     <div className="space-y-6">
@@ -56,6 +70,7 @@ const VendorDashboard = () => {
             </ButtonGroup>
           </div>
         </div>
+
         {viewMode === "card" ? (
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
             {isTransitioning
@@ -83,10 +98,9 @@ const VendorDashboard = () => {
                 ))
               : events.map((event) => (
                   <EventCard
-                    key={event.id}
+                    key={event._id}
                     event={event}
-                    onApprove={handleApprove}
-                    onReject={handleReject}
+                    onViewDetails={handleViewEvent}
                   />
                 ))}
           </div>
@@ -95,9 +109,44 @@ const VendorDashboard = () => {
             events={events}
             isLoading={isTransitioning}
             userRole="VENDOR"
+            onViewDetails={handleViewEvent}
           />
         )}
       </div>
+
+      <EventDetailModal
+        event={selectedEvent}
+        isOpen={isModalOpen}
+        viewMode="vendor"
+        onClose={handleCloseModal}
+        onOpenApprove={handleOpenApprove}
+        onOpenPropose={handleOpenPropose}
+        onOpenReject={handleOpenReject}
+      />
+
+      <ApproveEventModal
+        event={selectedEvent}
+        isLoading={isApprovingEvent}
+        isOpen={isApproveModalOpen}
+        onApprove={handleApproveEvent}
+        onClose={handleCloseApproveModal}
+      />
+
+      <RejectEventModal
+        event={selectedEvent}
+        isLoading={isRejectingEvent}
+        isOpen={isRejectModalOpen}
+        onClose={handleCloseRejectModal}
+        onReject={handleRejectEvent}
+      />
+
+      <ProposeNewDatesModal
+        event={selectedEvent}
+        isLoading={isProposingDates}
+        isOpen={isProposeModalOpen}
+        onClose={handleCloseProposeModal}
+        onPropose={handleProposeNewDates}
+      />
     </div>
   );
 };

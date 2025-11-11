@@ -13,11 +13,13 @@ const useHR = () => {
   const [selectedEvent, setSelectedEvent] = useState<IEvent | null>(null);
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [isCreateModalOpen, setIsCreateModalOpen] = useState(false);
+  const [isApproveModalOpen, setIsApproveModalOpen] = useState(false);
+  const [isRejectModalOpen, setIsRejectModalOpen] = useState(false);
   const [isTransitioning, setIsTransitioning] = useState(false);
 
   const statusFromUrl = (router.query.status as string) || null;
   const [statusFilter, setStatusFilter] = useState<string | null>(
-    statusFromUrl,
+    statusFromUrl
   );
 
   useEffect(() => {
@@ -42,14 +44,14 @@ const useHR = () => {
   const allEvents = eventsData?.events || [];
 
   const pendingCount = allEvents.filter(
-    (e) => e.status === "PENDING" || e.status === "AWAITING_VENDOR_PROPOSAL",
+    (e) => e.status === "PENDING" || e.status === "AWAITING_VENDOR_PROPOSAL"
   ).length;
   const approvedCount = allEvents.filter((e) => e.status === "APPROVED").length;
   const rejectedCount = allEvents.filter((e) => e.status === "REJECTED").length;
   const completeCount = allEvents.filter((e) => e.status === "COMPLETE").length;
   const expiredCount = allEvents.filter((e) => e.status === "EXPIRED").length;
   const awaitingApprovalCount = allEvents.filter(
-    (e) => e.status === "AWAITING_HR_APPROVAL",
+    (e) => e.status === "AWAITING_HR_APPROVAL"
   ).length;
 
   const filteredEvents =
@@ -73,6 +75,26 @@ const useHR = () => {
 
   const handleCloseModal = () => {
     setIsModalOpen(false);
+    setSelectedEvent(null);
+  };
+
+  const handleOpenApprove = () => {
+    setIsModalOpen(false);
+    setIsApproveModalOpen(true);
+  };
+
+  const handleOpenReject = () => {
+    setIsModalOpen(false);
+    setIsRejectModalOpen(true);
+  };
+
+  const handleCloseApproveModal = () => {
+    setIsApproveModalOpen(false);
+    setSelectedEvent(null);
+  };
+
+  const handleCloseRejectModal = () => {
+    setIsRejectModalOpen(false);
     setSelectedEvent(null);
   };
 
@@ -134,6 +156,68 @@ const useHR = () => {
     deleteEventMutation.mutate(eventId);
   };
 
+  const approveVendorDatesMutation = useMutation({
+    mutationFn: ({
+      eventId,
+      confirmedDate,
+    }: {
+      eventId: string;
+      confirmedDate: string;
+    }) => eventServices.approveEvent(eventId, { confirmedDate }),
+    onSuccess: () => {
+      setToaster({
+        type: "success",
+        message: "Vendor dates approved successfully!",
+      });
+      setIsApproveModalOpen(false);
+      setSelectedEvent(null);
+      refetchEvents();
+    },
+    onError: (error: any) => {
+      setToaster({
+        type: "error",
+        message: error?.response?.data?.message || "Failed to approve dates",
+      });
+    },
+  });
+
+  const rejectVendorDatesMutation = useMutation({
+    mutationFn: ({
+      eventId,
+      rejectionReason,
+    }: {
+      eventId: string;
+      rejectionReason: string;
+    }) => eventServices.rejectEvent(eventId, { rejectionReason }),
+    onSuccess: () => {
+      setToaster({
+        type: "success",
+        message: "Vendor dates rejected successfully",
+      });
+      setIsRejectModalOpen(false);
+      setSelectedEvent(null);
+      refetchEvents();
+    },
+    onError: (error: any) => {
+      setToaster({
+        type: "error",
+        message:
+          error?.response?.data?.message || "Failed to reject vendor dates",
+      });
+    },
+  });
+
+  const handleApproveVendorDates = (eventId: string, confirmedDate: string) => {
+    approveVendorDatesMutation.mutate({ eventId, confirmedDate });
+  };
+
+  const handleRejectVendorDates = (
+    eventId: string,
+    rejectionReason: string
+  ) => {
+    rejectVendorDatesMutation.mutate({ eventId, rejectionReason });
+  };
+
   const tabs = [
     { key: "ALL", label: "All", count: allEvents.length },
     { key: "PENDING", label: "Pending", count: pendingCount },
@@ -166,7 +250,7 @@ const useHR = () => {
         query,
       },
       undefined,
-      { shallow: true },
+      { shallow: true }
     );
 
     setTimeout(() => {
@@ -179,17 +263,27 @@ const useHR = () => {
     selectedEvent,
     isModalOpen,
     isCreateModalOpen,
+    isApproveModalOpen,
+    isRejectModalOpen,
     setIsCreateModalOpen,
     handleViewEvent,
     handleCloseModal,
+    handleOpenApprove,
+    handleOpenReject,
+    handleCloseApproveModal,
+    handleCloseRejectModal,
     handleCreateEvent,
     handleDeleteEvent,
+    handleApproveVendorDates,
+    handleRejectVendorDates,
     tabs,
     statusFilter,
     handleStatusChange,
     isTransitioning: isTransitioning || isLoadingEvents,
     isCreatingEvent: createEventMutation.isPending,
     isDeletingEvent: deleteEventMutation.isPending,
+    isApprovingDates: approveVendorDatesMutation.isPending,
+    isRejectingDates: rejectVendorDatesMutation.isPending,
     vendorsData,
     isLoadingVendors,
     vendorsError,

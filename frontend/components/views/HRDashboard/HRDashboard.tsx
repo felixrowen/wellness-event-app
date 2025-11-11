@@ -5,6 +5,8 @@ import useHR from "./useHR";
 
 import { EventDetailModal } from "@/components/ui/Modal/HR/EventDetailModal";
 import { CreateEventModal } from "@/components/ui/Modal/HR/CreateEventModal";
+import { ApproveVendorDatesModal } from "@/components/ui/Modal/HR/ApproveVendorDatesModal";
+import { RejectEventModal } from "@/components/ui/Modal/Vendor/RejectEventModal";
 import FilterTabs from "@/components/ui/FilterTabs";
 import EventTable from "@/components/ui/Table/EventTable";
 
@@ -14,17 +16,27 @@ const HRDashboard = () => {
     selectedEvent,
     isModalOpen,
     isCreateModalOpen,
+    isApproveModalOpen,
+    isRejectModalOpen,
     setIsCreateModalOpen,
     handleViewEvent,
     handleCloseModal,
+    handleOpenApprove,
+    handleOpenReject,
+    handleCloseApproveModal,
+    handleCloseRejectModal,
     handleCreateEvent,
     handleDeleteEvent,
+    handleApproveVendorDates,
+    handleRejectVendorDates,
     tabs,
     statusFilter,
     handleStatusChange,
     isTransitioning,
     isCreatingEvent,
     isDeletingEvent,
+    isApprovingDates,
+    isRejectingDates,
     vendorsData,
     isLoadingVendors,
   } = useHR();
@@ -71,6 +83,24 @@ const HRDashboard = () => {
         viewMode="hr"
         onCancelEvent={handleDeleteEvent}
         onClose={handleCloseModal}
+        onOpenApprove={handleOpenApprove}
+        onOpenReject={handleOpenReject}
+      />
+
+      <ApproveVendorDatesModal
+        event={selectedEvent}
+        isLoading={isApprovingDates}
+        isOpen={isApproveModalOpen}
+        onApprove={handleApproveVendorDates}
+        onClose={handleCloseApproveModal}
+      />
+
+      <RejectEventModal
+        event={selectedEvent}
+        isLoading={isRejectingDates}
+        isOpen={isRejectModalOpen}
+        onClose={handleCloseRejectModal}
+        onReject={handleRejectVendorDates}
       />
 
       <CreateEventModal
