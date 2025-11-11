@@ -68,8 +68,6 @@ export class EventService {
       baseFilter.assignedVendorId = userId;
     }
 
-    await this.updateEventStatuses();
-
     return await eventRepository.findWithOptions({
       ...queryOptions,
       filter: baseFilter,
