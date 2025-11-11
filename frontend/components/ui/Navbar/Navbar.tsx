@@ -58,7 +58,7 @@ export const Navbar: FC<NavbarProps> = ({
         <Dropdown placement="bottom-end">
           <DropdownTrigger>
             <Button
-              className="p-0 h-auto bg-transparent data-[hover=true]:bg-transparent"
+              className="pr-2 h-auto bg-transparent data-[hover=true]:bg-transparent"
               variant="light"
             >
               <User
