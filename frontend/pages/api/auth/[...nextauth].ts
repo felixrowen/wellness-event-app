@@ -78,17 +78,14 @@ export default NextAuth({
 
       return token as JWTExtended;
     },
-    async session({
-      session,
-      token,
-    }: {
-      session: SessionExtended;
-      token: JWTExtended;
-    }) {
-      session.user = token.user;
-      session.accessToken = token.user?.accessToken;
+    async session({ session, token }) {
+      const extendedSession = session as SessionExtended;
+      const extendedToken = token as JWTExtended;
 
-      return session;
+      extendedSession.user = extendedToken.user;
+      extendedSession.accessToken = extendedToken.user?.accessToken;
+
+      return extendedSession;
     },
   },
 });

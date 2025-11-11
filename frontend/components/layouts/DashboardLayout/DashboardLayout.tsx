@@ -2,7 +2,7 @@ import { ReactNode, useState } from "react";
 import { Button } from "@heroui/react";
 import { FiMenu, FiX } from "react-icons/fi";
 import { useRouter } from "next/router";
-import { signOut } from "next-auth/react";
+import { signOut, useSession } from "next-auth/react";
 
 import { SIDEBAR_HR, SIDEBAR_VENDOR } from "./DashboardLayout.constants";
 
@@ -10,6 +10,7 @@ import { Sidebar, SidebarSection } from "@/components/ui/Sidebar";
 import { Logo } from "@/components/icons";
 import { Navbar } from "@/components/ui/Navbar";
 import { PageHead } from "@/components/layouts/head";
+import { SessionExtended } from "@/types/Auth";
 
 export interface DashboardLayoutProps {
   children: ReactNode;
@@ -27,6 +28,7 @@ const DashboardLayout = ({
   sidebarSections,
 }: DashboardLayoutProps) => {
   const router = useRouter();
+  const { data: session } = useSession() as { data: SessionExtended | null };
   const [collapsed, setCollapsed] = useState(false);
   const [mobileOpen, setMobileOpen] = useState(false);
 
@@ -58,14 +60,14 @@ const DashboardLayout = ({
   const navbarConfig = {
     hr: {
       title: "HR Admin Dashboard",
-      userName: "HR Admin",
-      userEmail: "hr@techcorp.com",
+      userName: session?.user?.fullName,
+      userEmail: session?.user?.email,
       userAvatar: "https://i.pravatar.cc/150?u=hradmin",
     },
     vendor: {
       title: "Vendor Dashboard",
-      userName: "Vendor User",
-      userEmail: "vendor@wellness.app",
+      userName: session?.user?.fullName,
+      userEmail: session?.user?.email,
       userAvatar: "https://i.pravatar.cc/150?u=vendor",
     },
   };

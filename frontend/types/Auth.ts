@@ -1,8 +1,9 @@
 import { Session, User } from "next-auth";
 import { JWT } from "next-auth/jwt";
 
-interface SessionExtended extends Session {
+interface SessionExtended extends Omit<Session, "user"> {
   accessToken?: string;
+  user?: UserExtended;
 }
 
 interface JWTExtended extends JWT {
