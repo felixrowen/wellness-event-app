@@ -3,12 +3,11 @@ import { connectDatabase } from "./database/connection";
 import express from "express";
 import bodyParser from "body-parser";
 import cors from "cors";
-import swaggerUi from "swagger-ui-express";
-import swaggerDocument from "./docs/swagger_output.json";
 import { config } from "./config";
 import routes from "./routes";
 import { errorHandler } from "./middlewares";
 import eventService from "./services/event.service";
+import { setupSwagger } from "./utils/swagger.util";
 
 async function init() {
   try {
@@ -32,7 +31,9 @@ async function init() {
     app.use(bodyParser.json());
     app.use(bodyParser.urlencoded({ extended: true }));
 
-    app.use("/api-docs", swaggerUi.serve, swaggerUi.setup(swaggerDocument));
+    const swagger = setupSwagger();
+    app.use("/api-docs", swagger.serve, swagger.setup);
+
     app.use("/api", routes);
     app.use(errorHandler);
 
