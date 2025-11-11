@@ -1,13 +1,17 @@
-import { useState } from "react";
+import { useContext, useState } from "react";
 import * as yup from "yup";
 import { useForm } from "react-hook-form";
 import { yupResolver } from "@hookform/resolvers/yup";
 import { useMutation } from "@tanstack/react-query";
 import { useRouter } from "next/router";
+import { AxiosError } from "axios";
+
+import authServices from "@/services/auth.service";
+import { IRegister } from "@/types/Auth";
+import { ToasterContext } from "@/contexts/ToasterContext";
 
 const registerSchema = yup.object().shape({
   fullName: yup.string().required("Please input your fullname"),
-  username: yup.string().required("Please input your username"),
   email: yup
     .string()
     .email("Email format not valid")
@@ -20,6 +24,20 @@ const registerSchema = yup.object().shape({
     .string()
     .oneOf([yup.ref("password"), ""], "Password not match")
     .required("Please input your password confirmation"),
+  role: yup
+    .string()
+    .oneOf(["HR", "VENDOR"], "Role must be either HR or VENDOR")
+    .required("Please select your role"),
+  companyName: yup.string().when("role", {
+    is: "HR",
+    then: (schema) => schema.required("Please input your company name"),
+    otherwise: (schema) => schema.notRequired(),
+  }),
+  vendorName: yup.string().when("role", {
+    is: "VENDOR",
+    then: (schema) => schema.required("Please input your vendor name"),
+    otherwise: (schema) => schema.notRequired(),
+  }),
 });
 
 const useRegister = () => {
@@ -28,6 +46,8 @@ const useRegister = () => {
     password: false,
     confirmPassword: false,
   });
+
+  const { setToaster } = useContext(ToasterContext);
 
   const handleVisiblePassword = (key: "password" | "confirmPassword") => {
     setVisiblePassword({
@@ -42,28 +62,63 @@ const useRegister = () => {
     formState: { errors },
     reset,
     setError,
-  } = useForm({
-    resolver: yupResolver(registerSchema),
+    watch,
+  } = useForm<IRegister>({
+    resolver: yupResolver(registerSchema) as any,
+    defaultValues: {
+      role: "VENDOR",
+    },
   });
 
-  const registerService = async (payload: any) => {
-    console.log("register payload", payload);
+  const selectedRole = watch("role");
+
+  const registerService = async (payload: IRegister) => {
+    // eslint-disable-next-line no-console
+    console.log("Registering with payload:", payload);
+    const response = await authServices.register(payload);
+
+    // eslint-disable-next-line no-console
+    console.log("Registration response:", response);
+
+    return response.data;
   };
 
   const { mutate: mutateRegister, isPending: isPendingRegister } = useMutation({
     mutationFn: registerService,
-    onError: (error) => {
-      console.log("error", error);
+    onError: (error: AxiosError<{ message: string }>) => {
+      // eslint-disable-next-line no-console
+      console.error("Registration error:", error);
+      // eslint-disable-next-line no-console
+      console.error("Error response:", error.response);
+
+      const errorMessage =
+        error.response?.data?.message || error.message || "Registration failed";
+
+      if (errorMessage.includes("email")) {
+        setError("email", {
+          type: "manual",
+          message: errorMessage,
+        });
+      } else {
+        setToaster({
+          type: "error",
+          message: errorMessage,
+        });
+      }
     },
-    onSuccess: () => {
+    onSuccess: (data) => {
+      setToaster({
+        type: "success",
+        message: data.message || "Registration successful! Please login.",
+      });
       reset();
-      router.push("/auth/register/success");
+      router.push("/auth/login");
     },
   });
 
-  const handleRegister = (data: any) => {
-    console.log("register data", data);
-  } 
+  const handleRegister = (data: IRegister) => {
+    mutateRegister(data);
+  };
 
   return {
     visiblePassword,
@@ -73,6 +128,7 @@ const useRegister = () => {
     handleRegister,
     isPendingRegister,
     errors,
+    selectedRole,
   };
 };
 

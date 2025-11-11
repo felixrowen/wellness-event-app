@@ -1,4 +1,12 @@
-import { Button, Card, CardBody, Input, Spinner } from "@heroui/react";
+import {
+  Button,
+  Card,
+  CardBody,
+  Input,
+  Spinner,
+  RadioGroup,
+  Radio,
+} from "@heroui/react";
 import Link from "next/link";
 import { FaEye, FaEyeSlash } from "react-icons/fa6";
 import { Controller } from "react-hook-form";
@@ -16,6 +24,7 @@ const Register = () => {
     handleRegister,
     isPendingRegister,
     errors,
+    selectedRole,
   } = useRegister();
 
   return (
@@ -35,10 +44,26 @@ const Register = () => {
           <form
             className={cn(
               "flex w-80 flex-col",
-              Object.keys(errors).length > 0 ? "gap-2" : "gap-4"
+              Object.keys(errors).length > 0 ? "gap-2" : "gap-4",
             )}
             onSubmit={handleSubmit(handleRegister)}
           >
+            <Controller
+              control={control}
+              name="role"
+              render={({ field }) => (
+                <RadioGroup
+                  {...field}
+                  errorMessage={errors.role?.message}
+                  isInvalid={errors.role !== undefined}
+                  label="Register as"
+                  orientation="horizontal"
+                >
+                  <Radio value="VENDOR">Vendor</Radio>
+                  <Radio value="HR">HR</Radio>
+                </RadioGroup>
+              )}
+            />
             <Controller
               control={control}
               name="fullName"
@@ -54,21 +79,40 @@ const Register = () => {
                 />
               )}
             />
-            <Controller
-              control={control}
-              name="username"
-              render={({ field }) => (
-                <Input
-                  {...field}
-                  autoComplete="off"
-                  errorMessage={errors.username?.message}
-                  isInvalid={errors.username !== undefined}
-                  label="Username"
-                  type="text"
-                  variant="bordered"
-                />
-              )}
-            />
+            {selectedRole === "HR" && (
+              <Controller
+                control={control}
+                name="companyName"
+                render={({ field }) => (
+                  <Input
+                    {...field}
+                    autoComplete="off"
+                    errorMessage={errors.companyName?.message}
+                    isInvalid={errors.companyName !== undefined}
+                    label="Company Name"
+                    type="text"
+                    variant="bordered"
+                  />
+                )}
+              />
+            )}
+            {selectedRole === "VENDOR" && (
+              <Controller
+                control={control}
+                name="vendorName"
+                render={({ field }) => (
+                  <Input
+                    {...field}
+                    autoComplete="off"
+                    errorMessage={errors.vendorName?.message}
+                    isInvalid={errors.vendorName !== undefined}
+                    label="Vendor Name"
+                    type="text"
+                    variant="bordered"
+                  />
+                )}
+              />
+            )}
             <Controller
               control={control}
               name="email"
