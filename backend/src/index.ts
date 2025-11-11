@@ -16,7 +16,10 @@ async function init() {
 
     app.use(
       cors({
-        origin: config.cors.origin,
+        origin: "*",
+        credentials: true,
+        methods: ["GET", "POST", "PUT", "DELETE", "PATCH", "OPTIONS"],
+        allowedHeaders: ["Content-Type", "Authorization"],
       })
     );
 
@@ -27,13 +30,16 @@ async function init() {
 
     app.use(errorHandler);
 
-    setInterval(async () => {
-      try {
-        await eventService.updateEventStatuses();
-      } catch (error) {
-        console.error("Error updating event statuses:", error);
-      }
-    }, 60 * 60 * 1000); // 1 HR
+    setInterval(
+      async () => {
+        try {
+          await eventService.updateEventStatuses();
+        } catch (error) {
+          console.error("Error updating event statuses:", error);
+        }
+      },
+      60 * 60 * 1000
+    ); // 1 HR
 
     app.listen(config.port, () => {
       console.log(`Server is running on http://localhost:${config.port}`);
