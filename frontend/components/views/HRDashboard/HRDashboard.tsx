@@ -3,8 +3,8 @@ import { FiPlus } from "react-icons/fi";
 
 import useHR from "./useHR";
 
-import { EventDetailModal } from "@/components/ui/Modal/EventDetailModal";
-import { CreateEventModal } from "@/components/ui/Modal/CreateEventModal";
+import { EventDetailModal } from "@/components/ui/Modal/HR/EventDetailModal";
+import { CreateEventModal } from "@/components/ui/Modal/HR/CreateEventModal";
 import FilterTabs from "@/components/ui/FilterTabs";
 import EventTable from "@/components/ui/Table/EventTable";
 
@@ -18,11 +18,13 @@ const HRDashboard = () => {
     handleViewEvent,
     handleCloseModal,
     handleCreateEvent,
+    handleDeleteEvent,
     tabs,
     statusFilter,
     handleStatusChange,
     isTransitioning,
     isCreatingEvent,
+    isDeletingEvent,
     vendorsData,
     isLoadingVendors,
   } = useHR();
@@ -63,9 +65,11 @@ const HRDashboard = () => {
       </div>
 
       <EventDetailModal
-        event={selectedEvent as any}
+        event={selectedEvent}
+        isCancelling={isDeletingEvent}
         isOpen={isModalOpen}
         viewMode="hr"
+        onCancelEvent={handleDeleteEvent}
         onClose={handleCloseModal}
       />
 

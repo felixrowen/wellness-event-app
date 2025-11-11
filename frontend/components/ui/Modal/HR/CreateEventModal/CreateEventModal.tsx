@@ -171,7 +171,7 @@ export function CreateEventModal({
                   </div>
 
                   {proposedDates?.map((date, index) => (
-                    <div key={index} className="flex gap-2 items-start">
+                    <div key={index} className="flex gap-2 items-center">
                       <DatePicker
                         className="flex-1 bg-transparent"
                         granularity="second"
@@ -191,8 +191,7 @@ export function CreateEventModal({
                       />
                       <Button
                         isIconOnly
-                        color="danger"
-                        size="sm"
+                        size="lg"
                         type="button"
                         variant="flat"
                         onPress={() => handleRemoveProposedDate(index)}

@@ -44,6 +44,10 @@ const eventServices = {
       data,
     );
   },
+
+  deleteEvent: async (id: string) => {
+    return axiosInstance.delete<IEventResponse<null>>(`/events/${id}`);
+  },
 };
 
 export default eventServices;

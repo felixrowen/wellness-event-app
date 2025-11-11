@@ -108,8 +108,30 @@ const useHR = () => {
     },
   });
 
+  const deleteEventMutation = useMutation({
+    mutationFn: (eventId: string) => eventServices.deleteEvent(eventId),
+    onSuccess: () => {
+      setToaster({
+        type: "success",
+        message: "Event cancelled successfully",
+      });
+      handleCloseModal();
+      refetchEvents();
+    },
+    onError: (error: any) => {
+      setToaster({
+        type: "error",
+        message: error?.response?.data?.message || "Failed to cancel event",
+      });
+    },
+  });
+
   const handleCreateEvent = (eventData: ICreateEventDTO) => {
     createEventMutation.mutate(eventData);
+  };
+
+  const handleDeleteEvent = (eventId: string) => {
+    deleteEventMutation.mutate(eventId);
   };
 
   const tabs = [
@@ -117,12 +139,12 @@ const useHR = () => {
     { key: "PENDING", label: "Pending", count: pendingCount },
     {
       key: "AWAITING_HR_APPROVAL",
-      label: "Awaiting Approval",
+      label: "Need Approval",
       count: awaitingApprovalCount,
     },
-    { key: "APPROVED", label: "Approved", count: approvedCount },
+    { key: "APPROVED", label: "Vendor Approved", count: approvedCount },
     { key: "REJECTED", label: "Rejected", count: rejectedCount },
-    { key: "COMPLETE", label: "Complete", count: completeCount },
+    { key: "COMPLETE", label: "Done", count: completeCount },
     { key: "EXPIRED", label: "Expired", count: expiredCount },
   ];
 
@@ -161,11 +183,13 @@ const useHR = () => {
     handleViewEvent,
     handleCloseModal,
     handleCreateEvent,
+    handleDeleteEvent,
     tabs,
     statusFilter,
     handleStatusChange,
     isTransitioning: isTransitioning || isLoadingEvents,
     isCreatingEvent: createEventMutation.isPending,
+    isDeletingEvent: deleteEventMutation.isPending,
     vendorsData,
     isLoadingVendors,
     vendorsError,

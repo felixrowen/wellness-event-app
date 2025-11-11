@@ -38,11 +38,16 @@ const EventTable: FC<EventTableProps> = ({
         <TableColumn>EVENT</TableColumn>
         <TableColumn>COMPANY</TableColumn>
         <TableColumn>LOCATION</TableColumn>
-        {/* <TableColumn>DATE & TIME</TableColumn> */}
         <TableColumn>STATUS</TableColumn>
         <TableColumn>ACTIONS</TableColumn>
       </TableHeader>
-      <TableBody>
+      <TableBody
+        emptyContent={
+          <div className="text-center py-8">
+            <p className="text-default-500">No events found</p>
+          </div>
+        }
+      >
         {isLoading
           ? Array.from({ length: 5 }).map((_, index) => (
               <TableRow key={`skeleton-${index}`}>
@@ -60,9 +65,6 @@ const EventTable: FC<EventTableProps> = ({
                 <TableCell>
                   <Skeleton className="w-32 h-4 rounded-lg" />
                 </TableCell>
-                {/* <TableCell>
-                  <Skeleton className="w-28 h-4 rounded-lg" />
-                </TableCell> */}
                 <TableCell>
                   <Skeleton className="w-20 h-6 rounded-full" />
                 </TableCell>
@@ -99,22 +101,6 @@ const EventTable: FC<EventTableProps> = ({
                     <span className="text-sm">{event.location || "N/A"}</span>
                   </div>
                 </TableCell>
-                {/* <TableCell>
-                  <div className="flex items-center gap-2">
-                    <FiCalendar size={14} />
-                    <span className="text-sm">
-                      {event.proposedDates[0]
-                        ? formatDate(event.proposedDates[0])
-                        : "N/A"}
-                    </span>
-                  </div>
-                  <div className="flex items-center gap-2">
-                    <FiClock size={14} />
-                    <span className="text-sm">
-                      {event.createdAt ? formatTime(event.createdAt) : "N/A"}
-                    </span>
-                  </div>
-                </TableCell> */}
                 <TableCell>
                   <Chip
                     color={getStatusColor(userRole, event.status)}

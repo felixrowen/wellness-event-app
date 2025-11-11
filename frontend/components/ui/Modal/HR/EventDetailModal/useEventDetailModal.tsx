@@ -1,0 +1,98 @@
+import { useMemo, useState } from "react";
+
+import { IEvent, EVENT_CATEGORY_LABELS, EVENT_CATEGORY } from "@/types";
+import { Role, getStatusLabel, getStatusColor } from "@/utils/statusLabels";
+import { formatDate, formatTime } from "@/utils/helpers";
+
+interface UseEventDetailModalProps {
+  event: IEvent | null;
+  viewMode: "hr" | "vendor";
+}
+
+export function useEventDetailModal({
+  event,
+  viewMode,
+}: UseEventDetailModalProps) {
+  const [copiedId, setCopiedId] = useState(false);
+
+  const userRole: Role = viewMode === "hr" ? "HR" : "VENDOR";
+
+  const statusInfo = useMemo(() => {
+    if (!event) return null;
+
+    return {
+      label: getStatusLabel(userRole, event.status),
+      color: getStatusColor(userRole, event.status),
+    };
+  }, [event, userRole]);
+
+  const categoryLabel = useMemo(() => {
+    if (!event) return "Unknown";
+
+    return EVENT_CATEGORY_LABELS[event.category as EVENT_CATEGORY] || "Unknown";
+  }, [event]);
+
+  const formattedDates = useMemo(() => {
+    if (!event) return { proposed: [], confirmed: null };
+
+    const proposed = event.proposedDates.map((date) => ({
+      date: formatDate(date),
+      time: formatTime(date),
+      full: date,
+    }));
+
+    const confirmed = event.confirmedDate
+      ? {
+          date: formatDate(event.confirmedDate),
+          time: formatTime(event.confirmedDate),
+          full: event.confirmedDate,
+        }
+      : null;
+
+    return { proposed, confirmed };
+  }, [event]);
+
+  const formattedCreatedDate = useMemo(() => {
+    if (!event?.createdAt) return null;
+
+    return {
+      date: formatDate(event.createdAt),
+      time: formatTime(event.createdAt),
+    };
+  }, [event]);
+
+  const hasRejectionReason = useMemo(() => {
+    return event?.status === "REJECTED" && !!event.rejectionReason;
+  }, [event]);
+
+  const isAwaitingAction = useMemo(() => {
+    if (!event) return false;
+
+    if (viewMode === "hr") {
+      return event.status === "AWAITING_HR_APPROVAL";
+    }
+
+    return (
+      event.status === "PENDING" || event.status === "AWAITING_VENDOR_PROPOSAL"
+    );
+  }, [event, viewMode]);
+
+  const handleCopyId = async () => {
+    if (!event?._id) return;
+    await navigator.clipboard.writeText(event._id);
+    setCopiedId(true);
+    setTimeout(() => setCopiedId(false), 2000);
+  };
+
+  return {
+    userRole,
+    statusInfo,
+    categoryLabel,
+    formattedDates,
+    formattedCreatedDate,
+    hasRejectionReason,
+    isAwaitingAction,
+    handleCopyId,
+    copiedId,
+  };
+}
