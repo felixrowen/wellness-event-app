@@ -99,6 +99,7 @@ const VendorDashboard = () => {
                 <EventCard
                   key={event._id}
                   event={event}
+                  userRole="VENDOR"
                   onViewDetails={handleViewEvent}
                 />
               ))}

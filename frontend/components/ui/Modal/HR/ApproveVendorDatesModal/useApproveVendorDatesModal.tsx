@@ -1,7 +1,7 @@
 import { useState } from "react";
 
 import { IEvent } from "@/types";
-import { formatDate } from "@/utils/helpers";
+import { formatDate } from "@/utils/date";
 
 interface UseApproveVendorDatesModalProps {
   event: IEvent | null;

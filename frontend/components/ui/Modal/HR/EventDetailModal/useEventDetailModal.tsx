@@ -1,8 +1,8 @@
 import { useMemo, useState } from "react";
 
 import { IEvent, EVENT_CATEGORY_LABELS, EVENT_CATEGORY } from "@/types";
-import { Role, getStatusLabel, getStatusColor } from "@/utils/statusLabels";
-import { formatDate, formatTime } from "@/utils/helpers";
+import { Role, getStatusLabel, getStatusColor } from "@/utils/labels";
+import { formatDate, formatTime } from "@/utils/date";
 
 interface UseEventDetailModalProps {
   event: IEvent | null;
@@ -22,7 +22,7 @@ export function useEventDetailModal({
 
     return {
       label: getStatusLabel(userRole, event.status),
-      color: getStatusColor(userRole, event.status),
+      color: getStatusColor(event.status),
     };
   }, [event, userRole]);
 

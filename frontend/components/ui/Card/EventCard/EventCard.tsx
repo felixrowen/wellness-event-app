@@ -13,13 +13,19 @@ import { FiCalendar, FiMapPin, FiClock, FiEye } from "react-icons/fi";
 import { useEventCard } from "./useEventCard";
 
 import { IEvent } from "@/types";
+import { Role } from "@/utils/labels";
 
 export interface EventCardProps {
   event: IEvent;
   onViewDetails: (event: IEvent) => void;
+  userRole: Role;
 }
 
-export const EventCard: FC<EventCardProps> = ({ event, onViewDetails }) => {
+export const EventCard: FC<EventCardProps> = ({
+  event,
+  onViewDetails,
+  userRole,
+}) => {
   const {
     categoryLabel,
     statusColor,
@@ -27,7 +33,8 @@ export const EventCard: FC<EventCardProps> = ({ event, onViewDetails }) => {
     isGrayscale,
     formattedDate,
     formattedTime,
-  } = useEventCard(event);
+    categoryImage,
+  } = useEventCard(event, userRole);
 
   return (
     <Card className="w-full hover:shadow-lg transition-shadow">
@@ -38,10 +45,15 @@ export const EventCard: FC<EventCardProps> = ({ event, onViewDetails }) => {
           className={`w-full h-[200px] object-cover rounded-b-none ${
             isGrayscale ? "grayscale" : ""
           }`}
-          src="https://images.unsplash.com/photo-1540575467063-178a50c2df87?w=800&auto=format&fit=crop"
+          src={categoryImage}
         />
         <div className="absolute top-3 right-3 z-10">
-          <Chip color={statusColor} size="sm" variant="flat">
+          <Chip
+            className="text-default-800"
+            color={statusColor}
+            size="sm"
+            variant="shadow"
+          >
             {statusLabel}
           </Chip>
         </div>

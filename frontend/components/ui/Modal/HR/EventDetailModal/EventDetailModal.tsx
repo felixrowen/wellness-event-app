@@ -104,7 +104,7 @@ export function EventDetailModal({
 
                     {statusInfo && (
                       <Chip color={statusInfo.color} size="sm" variant="flat">
-                        {statusInfo.label.text}
+                        {statusInfo.label}
                       </Chip>
                     )}
                   </div>

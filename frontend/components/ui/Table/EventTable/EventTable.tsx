@@ -12,7 +12,8 @@ import {
 } from "@heroui/react";
 import { FiMapPin } from "react-icons/fi";
 
-import { Role, getStatusLabel, getStatusColor } from "@/utils/statusLabels";
+import { Role, getStatusLabel, getStatusColor } from "@/utils/labels";
+import { getCategoryImage } from "@/utils/category";
 import { EVENT_CATEGORY_LABELS, EVENT_CATEGORY, IEvent } from "@/types";
 
 export interface EventTableProps {
@@ -49,7 +50,7 @@ const EventTable: FC<EventTableProps> = ({
         }
       >
         {isLoading
-          ? Array.from({ length: 5 }).map((_, index) => (
+          ? Array.from({ length: 4 }).map((_, index) => (
               <TableRow key={`skeleton-${index}`}>
                 <TableCell>
                   <div className="flex items-center gap-3">
@@ -82,7 +83,7 @@ const EventTable: FC<EventTableProps> = ({
                       className={`w-16 h-16 rounded-lg object-cover ${
                         event.status === "REJECTED" ? "grayscale" : ""
                       }`}
-                      src="https://images.unsplash.com/photo-1540575467063-178a50c2df87?w=800&auto=format&fit=crop"
+                      src={getCategoryImage(event.category)}
                     />
                     <div>
                       <p className="font-semibold">{event.title}</p>
@@ -103,11 +104,11 @@ const EventTable: FC<EventTableProps> = ({
                 </TableCell>
                 <TableCell>
                   <Chip
-                    color={getStatusColor(userRole, event.status)}
+                    color={getStatusColor(event.status)}
                     size="sm"
                     variant="flat"
                   >
-                    {getStatusLabel(userRole, event.status).text}
+                    {getStatusLabel(userRole, event.status)}
                   </Chip>
                 </TableCell>
                 <TableCell>
