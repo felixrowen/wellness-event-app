@@ -7,7 +7,13 @@
     "dev": "ts-node-dev --respawn --transpile-only src/index.ts",
     "build": "tsc",
     "start": "node dist/index.js",
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "lint": "eslint . --ext .ts,.js",
+    "lint:fix": "eslint . --ext .ts,.js --fix",
+    "format": "prettier --write \"src/**/*.{ts,js,json}\"",
+    "format:check": "prettier --check \"src/**/*.{ts,js,json}\"",
+    "type-check": "tsc --noEmit",
+    "check-all": "npm run type-check && npm run lint && npm run format:check"
   },
   "keywords": [],
   "author": "",
@@ -29,7 +35,12 @@
     "@types/jsonwebtoken": "^9.0.10",
     "@types/node": "^24.10.0",
     "@types/swagger-ui-express": "^4.1.8",
+    "eslint": "^9.39.1",
+    "globals": "^16.5.0",
+    "jiti": "^2.6.1",
+    "prettier": "^3.6.2",
     "ts-node-dev": "^2.0.0",
-    "typescript": "^5.9.3"
+    "typescript": "^5.9.3",
+    "typescript-eslint": "^8.46.4"
   }
 }
