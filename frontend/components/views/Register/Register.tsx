@@ -243,11 +243,6 @@ const Register = () => {
           </p>
         </CardBody>
       </Card>
-
-      <p className="absolute bottom-6 text-xs text-gray-400">
-        © {new Date().getFullYear()} Wellness Event • Empowering healthy
-        communities 🌸
-      </p>
     </div>
   );
 };
