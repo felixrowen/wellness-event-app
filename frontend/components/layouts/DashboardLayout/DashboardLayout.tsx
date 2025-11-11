@@ -2,6 +2,7 @@ import { ReactNode, useState } from "react";
 import { Button } from "@heroui/react";
 import { FiMenu, FiX } from "react-icons/fi";
 import { useRouter } from "next/router";
+import { signOut } from "next-auth/react";
 
 import { SIDEBAR_HR, SIDEBAR_VENDOR } from "./DashboardLayout.constants";
 
@@ -29,10 +30,8 @@ const DashboardLayout = ({
   const [collapsed, setCollapsed] = useState(false);
   const [mobileOpen, setMobileOpen] = useState(false);
 
-  const handleLogout = () => {
-    localStorage.removeItem("isAuthenticated");
-    localStorage.removeItem("authToken");
-    localStorage.removeItem("userRole");
+  const handleLogout = async () => {
+    await signOut({ redirect: false });
     router.push("/auth/login");
   };
 

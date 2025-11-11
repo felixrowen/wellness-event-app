@@ -1,6 +1,5 @@
-import { useEffect, useState } from "react";
+import { useState } from "react";
 import { Button, ButtonGroup, Skeleton, Card } from "@heroui/react";
-import { useRouter } from "next/router";
 import { FiGrid, FiList } from "react-icons/fi";
 
 import useVendor from "./useVendor";
@@ -10,8 +9,7 @@ import FilterTabs from "@/components/ui/FilterTabs";
 import EventTable from "@/components/ui/Table/EventTable";
 
 const VendorDashboard = () => {
-  const router = useRouter();
-  const [isLoading, setIsLoading] = useState(true);
+  const [isLoading] = useState(false);
 
   const {
     events,
@@ -24,25 +22,6 @@ const VendorDashboard = () => {
     viewMode,
     isTransitioning,
   } = useVendor();
-
-  useEffect(() => {
-    const isAuthenticated = localStorage.getItem("isAuthenticated");
-    const userRole = localStorage.getItem("userRole");
-
-    if (!isAuthenticated) {
-      router.push("/auth/login");
-
-      return;
-    }
-
-    if (userRole === "HR") {
-      router.push("/hr/dashboard");
-
-      return;
-    }
-
-    setIsLoading(false);
-  }, [router]);
 
   if (isLoading) {
     return null;

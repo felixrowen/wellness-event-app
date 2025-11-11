@@ -39,10 +39,23 @@ export default NextAuth({
             return null;
           }
 
-          const profileResult = await authServices.getProfileWithToken(token);
-          const user = profileResult.data.data;
+          const profileResult = await fetch(
+            `${process.env.NEXT_PUBLIC_API_URL}/auth/me`,
+            {
+              headers: {
+                Authorization: `Bearer ${token}`,
+              },
+            },
+          );
 
-          if (profileResult.status === 200 && user._id) {
+          if (!profileResult.ok) {
+            return null;
+          }
+
+          const profileData = await profileResult.json();
+          const user = profileData.data;
+
+          if (user._id) {
             return {
               ...user,
               id: user._id,

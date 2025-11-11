@@ -1,7 +1,7 @@
 import { getSession } from "next-auth/react";
 import axios from "axios";
 
-import environment from "@/config/environment"
+import environment from "@/config/environment";
 import { SessionExtended } from "@/types/Auth";
 
 const headers = {
@@ -29,7 +29,16 @@ instance.interceptors.request.use(
 
 instance.interceptors.response.use(
   (response) => response,
-  (error) => Promise.reject(error),
+  async (error) => {
+    if (error.response?.status === 401) {
+      const { signOut } = await import("next-auth/react");
+
+      await signOut({ redirect: false });
+      window.location.href = "/auth/login";
+    }
+
+    return Promise.reject(error);
+  },
 );
 
 export default instance;
