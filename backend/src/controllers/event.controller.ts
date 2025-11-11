@@ -1,4 +1,5 @@
 import { Response } from "express";
+import { Types } from "mongoose";
 import eventService from "../services/event.service";
 import response from "../utils/response.util";
 import { IReqUser } from "../types";
@@ -12,7 +13,10 @@ export class EventController {
         return response.unauthorized(res, "User not authenticated");
       }
 
-      const result = await eventService.createEvent(req.body, companyInfoId);
+      const result = await eventService.createEvent(
+        req.body,
+        new Types.ObjectId(companyInfoId)
+      );
       response.success(res, result, "Event created successfully!");
     } catch (error) {
       response.error(res, error, "Failed to create event");
@@ -21,28 +25,25 @@ export class EventController {
 
   async getEvents(req: IReqUser, res: Response) {
     try {
-      const userId = req.user?.id;
-      const userRole = req.user?.role;
+      const { id, role } = req.user || {};
 
-      if (!userId || !userRole) {
+      if (!id || !role) {
         return response.unauthorized(res, "User not authenticated");
       }
 
       const { search, status, from, to, page = "1", limit = "10" } = req.query;
 
-      const queryOptions = {
-        search: search as string,
-        status: status as string,
-        from: from as string,
-        to: to as string,
-        page: parseInt(page as string, 10),
-        limit: parseInt(limit as string, 10),
-      };
-
       const result = await eventService.getEvents(
-        userId,
-        userRole,
-        queryOptions
+        new Types.ObjectId(id),
+        role,
+        {
+          search: search as string,
+          status: status as string,
+          from: from as string,
+          to: to as string,
+          page: parseInt(page as string, 10),
+          limit: parseInt(limit as string, 10),
+        }
       );
 
       response.pagination(
@@ -58,8 +59,7 @@ export class EventController {
 
   async getEventById(req: IReqUser, res: Response) {
     try {
-      const { id } = req.params;
-      const event = await eventService.getEventById(id);
+      const event = await eventService.getEventById(req.params.id);
       response.success(res, event, "Event retrieved successfully");
     } catch (error) {
       response.error(res, error, "Failed to retrieve event");
@@ -68,19 +68,17 @@ export class EventController {
 
   async approveEvent(req: IReqUser, res: Response) {
     try {
-      const { id } = req.params;
-      const userId = req.user?.id;
-      const userRole = req.user?.role;
+      const { id, role } = req.user || {};
 
-      if (!userId || !userRole) {
+      if (!id || !role) {
         return response.unauthorized(res, "User not authenticated");
       }
 
       const event = await eventService.approveEvent(
-        id,
+        req.params.id,
         req.body,
-        userId,
-        userRole
+        new Types.ObjectId(id),
+        role
       );
       response.success(res, event, "Event approved successfully");
     } catch (error) {
@@ -90,19 +88,17 @@ export class EventController {
 
   async rejectEvent(req: IReqUser, res: Response) {
     try {
-      const { id } = req.params;
-      const userId = req.user?.id;
-      const userRole = req.user?.role;
+      const { id, role } = req.user || {};
 
-      if (!userId || !userRole) {
+      if (!id || !role) {
         return response.unauthorized(res, "User not authenticated");
       }
 
       const event = await eventService.rejectEvent(
-        id,
+        req.params.id,
         req.body,
-        userId,
-        userRole
+        new Types.ObjectId(id),
+        role
       );
       response.success(res, event, "Event rejected successfully");
     } catch (error) {
@@ -112,15 +108,17 @@ export class EventController {
 
   async deleteEvent(req: IReqUser, res: Response) {
     try {
-      const { id } = req.params;
-      const userId = req.user?.id;
-      const userRole = req.user?.role;
+      const { id, role } = req.user || {};
 
-      if (!userId || !userRole) {
+      if (!id || !role) {
         return response.unauthorized(res, "User not authenticated");
       }
 
-      await eventService.deleteEvent(id, userId, userRole);
+      await eventService.deleteEvent(
+        req.params.id,
+        new Types.ObjectId(id),
+        role
+      );
       response.success(res, null, "Event cancelled successfully");
     } catch (error) {
       response.error(res, error, "Failed to cancel event");
