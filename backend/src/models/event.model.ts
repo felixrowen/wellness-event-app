@@ -39,7 +39,7 @@ const EventSchema = new mongoose.Schema<IEvent>(
     },
     category: {
       type: Number,
-      enum: Object.values(EVENT_CATEGORY),
+      enum: Object.values(EVENT_CATEGORY).filter((v) => typeof v === "number"),
       required: true,
     },
     proposedDates: {

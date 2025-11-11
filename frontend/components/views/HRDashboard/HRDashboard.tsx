@@ -22,6 +22,9 @@ const HRDashboard = () => {
     statusFilter,
     handleStatusChange,
     isTransitioning,
+    isCreatingEvent,
+    vendorsData,
+    isLoadingVendors,
   } = useHR();
 
   return (
@@ -67,7 +70,10 @@ const HRDashboard = () => {
       />
 
       <CreateEventModal
+        isLoading={isCreatingEvent}
+        isLoadingVendors={isLoadingVendors}
         isOpen={isCreateModalOpen}
+        vendorsData={vendorsData}
         onClose={() => setIsCreateModalOpen(false)}
         onSubmit={handleCreateEvent}
       />

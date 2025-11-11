@@ -86,6 +86,7 @@ export class EventService {
       const event = await eventRepository.create({
         title: data.title,
         description: data.description,
+        category: data.category,
         proposedDates: data.proposedDates || [],
         location: data.location,
         assignedVendorId: new Types.ObjectId(data.assignedVendorId),

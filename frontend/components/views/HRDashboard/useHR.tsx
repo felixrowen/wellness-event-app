@@ -1,14 +1,17 @@
-import { useState, useEffect } from "react";
+import { useState, useEffect, useContext } from "react";
 import { useRouter } from "next/router";
+import { useMutation, useQuery } from "@tanstack/react-query";
 
 import { getEventsByCompany, EventRequest } from "@/data/mockEvents";
-import { CreateEventData } from "@/components/ui/Modal/CreateEventModal";
+import { ICreateEventDTO } from "@/types";
+import eventServices from "@/services/event.service";
+import vendorServices from "@/services/vendor.service";
+import { ToasterContext } from "@/contexts/ToasterContext";
 
 const useHR = () => {
   const router = useRouter();
-  const [events, setEvents] = useState<EventRequest[]>(
-    getEventsByCompany("TechCorp Ltd"),
-  );
+  const { setToaster } = useContext(ToasterContext);
+  const [events] = useState<EventRequest[]>(getEventsByCompany("TechCorp Ltd"));
   const [selectedEvent, setSelectedEvent] = useState<EventRequest | null>(null);
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [isCreateModalOpen, setIsCreateModalOpen] = useState(false);
@@ -35,32 +38,39 @@ const useHR = () => {
     setSelectedEvent(null);
   };
 
-  const handleCreateEvent = (eventData: CreateEventData) => {
-    // TODO: API call to create event
-    const newEvent: EventRequest = {
-      id: (events.length + 1).toString(),
-      eventName: eventData.eventName,
-      vendorName: eventData.vendorName,
-      category: eventData.category,
-      proposedDates: [
-        eventData.proposedDate1,
-        eventData.proposedDate2,
-        eventData.proposedDate3,
-      ],
-      proposedLocation: eventData.proposedLocation,
-      capacity: eventData.capacity,
-      registered: 0,
-      status: "PENDING",
-      dateCreated: new Date().toISOString(),
-      imageUrl:
-        "https://images.unsplash.com/photo-1544367567-0f2fcb009e0b?w=400",
-      confirmedDate: null,
-      companyName: "TechCorp Ltd",
-      remarks: "",
-    };
+  const {
+    data: vendorsData,
+    isLoading: isLoadingVendors,
+    error: vendorsError,
+  } = useQuery({
+    queryKey: ["vendors"],
+    queryFn: async () => {
+      const response = await vendorServices.getAllVendors();
 
-    setEvents([newEvent, ...events]);
-    setIsCreateModalOpen(false);
+      return response.data.data.vendors;
+    },
+    enabled: isCreateModalOpen,
+  });
+
+  const createEventMutation = useMutation({
+    mutationFn: (data: ICreateEventDTO) => eventServices.createEvent(data),
+    onSuccess: () => {
+      setToaster({
+        type: "success",
+        message: "Event created successfully!",
+      });
+      setIsCreateModalOpen(false);
+    },
+    onError: (error: any) => {
+      setToaster({
+        type: "error",
+        message: error?.response?.data?.message || "Failed to create event",
+      });
+    },
+  });
+
+  const handleCreateEvent = (eventData: ICreateEventDTO) => {
+    createEventMutation.mutate(eventData);
   };
 
   const pendingCount = events.filter((e) => e.status === "PENDING").length;
@@ -124,6 +134,10 @@ const useHR = () => {
     statusFilter,
     handleStatusChange,
     isTransitioning,
+    isCreatingEvent: createEventMutation.isPending,
+    vendorsData,
+    isLoadingVendors,
+    vendorsError,
   };
 };
 
