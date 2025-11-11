@@ -96,8 +96,8 @@ const DashboardLayout = ({
             onMenuClick={() => setCollapsed(!collapsed)}
           />
 
-          <main className="flex-1 overflow-y-auto p-6">
-            <div className="max-w-7xl mx-auto">
+          <main className="flex-1 overflow-y-auto p-6 ">
+            <div className="mx-auto">
               {description && (
                 <p className="mb-4 text-small text-default-500">
                   {description}
