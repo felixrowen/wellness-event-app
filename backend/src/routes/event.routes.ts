@@ -16,6 +16,18 @@ router.post(
   AccessControlLimit([ROLES.HR]),
   validate(createEventValidator),
   eventController.createEvent.bind(eventController)
+  /*
+  #swagger.tags = ['Events']
+  #swagger.security = [{
+    "bearerAuth": {}
+  }]
+  #swagger.requestBody = {
+    required: true,
+    schema: {
+      $ref: "#/components/schemas/CreateEventRequest"
+    }
+  }
+  */
 );
 
 router.get(
@@ -23,6 +35,12 @@ router.get(
   authenticate,
   AccessControlLimit([ROLES.HR, ROLES.VENDOR]),
   eventController.getEvents.bind(eventController)
+  /*
+  #swagger.tags = ['Events']
+  #swagger.security = [{
+    "bearerAuth": {}
+  }]
+  */
 );
 
 router.get(
@@ -30,6 +48,12 @@ router.get(
   authenticate,
   AccessControlLimit([ROLES.HR, ROLES.VENDOR]),
   eventController.getEventById.bind(eventController)
+  /*
+  #swagger.tags = ['Events']
+  #swagger.security = [{
+    "bearerAuth": {}
+  }]
+  */
 );
 
 router.put(
@@ -38,6 +62,18 @@ router.put(
   AccessControlLimit([ROLES.HR, ROLES.VENDOR]),
   validate(approveEventValidator),
   eventController.approveEvent.bind(eventController)
+  /*
+  #swagger.tags = ['Events']
+  #swagger.security = [{
+    "bearerAuth": {}
+  }]
+  #swagger.requestBody = {
+    required: true,
+    schema: {
+      $ref: "#/components/schemas/ApproveEventRequest"
+    }
+  }
+  */
 );
 
 router.put(
@@ -46,6 +82,18 @@ router.put(
   AccessControlLimit([ROLES.HR, ROLES.VENDOR]),
   validate(rejectEventValidator),
   eventController.rejectEvent.bind(eventController)
+  /*
+  #swagger.tags = ['Events']
+  #swagger.security = [{
+    "bearerAuth": {}
+  }]
+  #swagger.requestBody = {
+    required: true,
+    schema: {
+      $ref: "#/components/schemas/RejectEventRequest"
+    }
+  }
+  */
 );
 
 router.delete(
@@ -53,6 +101,12 @@ router.delete(
   authenticate,
   AccessControlLimit([ROLES.HR]),
   eventController.deleteEvent.bind(eventController)
+  /*
+  #swagger.tags = ['Events']
+  #swagger.security = [{
+    "bearerAuth": {}
+  }]
+  */
 );
 
 export default router;
