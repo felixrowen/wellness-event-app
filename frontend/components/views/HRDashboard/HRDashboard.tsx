@@ -63,7 +63,7 @@ const HRDashboard = () => {
       </div>
 
       <EventDetailModal
-        event={selectedEvent}
+        event={selectedEvent as any}
         isOpen={isModalOpen}
         viewMode="hr"
         onClose={handleCloseModal}

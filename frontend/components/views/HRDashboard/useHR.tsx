@@ -2,8 +2,7 @@ import { useState, useEffect, useContext } from "react";
 import { useRouter } from "next/router";
 import { useMutation, useQuery } from "@tanstack/react-query";
 
-import { getEventsByCompany, EventRequest } from "@/data/mockEvents";
-import { ICreateEventDTO } from "@/types";
+import { ICreateEventDTO, IEvent } from "@/types";
 import eventServices from "@/services/event.service";
 import vendorServices from "@/services/vendor.service";
 import { ToasterContext } from "@/contexts/ToasterContext";
@@ -11,8 +10,7 @@ import { ToasterContext } from "@/contexts/ToasterContext";
 const useHR = () => {
   const router = useRouter();
   const { setToaster } = useContext(ToasterContext);
-  const [events] = useState<EventRequest[]>(getEventsByCompany("TechCorp Ltd"));
-  const [selectedEvent, setSelectedEvent] = useState<EventRequest | null>(null);
+  const [selectedEvent, setSelectedEvent] = useState<IEvent | null>(null);
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [isCreateModalOpen, setIsCreateModalOpen] = useState(false);
   const [isTransitioning, setIsTransitioning] = useState(false);
@@ -28,7 +26,47 @@ const useHR = () => {
     }
   }, [statusFromUrl, statusFilter]);
 
-  const handleViewEvent = (event: EventRequest) => {
+  const {
+    data: eventsData,
+    isLoading: isLoadingEvents,
+    refetch: refetchEvents,
+  } = useQuery({
+    queryKey: ["events"],
+    queryFn: async () => {
+      const response = await eventServices.getEvents();
+
+      return response.data.data;
+    },
+  });
+
+  const allEvents = eventsData?.events || [];
+
+  const pendingCount = allEvents.filter(
+    (e) => e.status === "PENDING" || e.status === "AWAITING_VENDOR_PROPOSAL",
+  ).length;
+  const approvedCount = allEvents.filter((e) => e.status === "APPROVED").length;
+  const rejectedCount = allEvents.filter((e) => e.status === "REJECTED").length;
+  const completeCount = allEvents.filter((e) => e.status === "COMPLETE").length;
+  const expiredCount = allEvents.filter((e) => e.status === "EXPIRED").length;
+  const awaitingApprovalCount = allEvents.filter(
+    (e) => e.status === "AWAITING_HR_APPROVAL",
+  ).length;
+
+  const filteredEvents =
+    statusFilter && statusFilter !== "ALL"
+      ? allEvents.filter((event) => {
+          if (statusFilter === "PENDING") {
+            return (
+              event.status === "PENDING" ||
+              event.status === "AWAITING_VENDOR_PROPOSAL"
+            );
+          }
+
+          return event.status === statusFilter;
+        })
+      : allEvents;
+
+  const handleViewEvent = (event: IEvent) => {
     setSelectedEvent(event);
     setIsModalOpen(true);
   };
@@ -60,6 +98,7 @@ const useHR = () => {
         message: "Event created successfully!",
       });
       setIsCreateModalOpen(false);
+      refetchEvents();
     },
     onError: (error: any) => {
       setToaster({
@@ -73,27 +112,19 @@ const useHR = () => {
     createEventMutation.mutate(eventData);
   };
 
-  const pendingCount = events.filter((e) => e.status === "PENDING").length;
-  const approvedCount = events.filter((e) => e.status === "APPROVED").length;
-  const rejectedCount = events.filter((e) => e.status === "REJECTED").length;
-  const cancelledCount = events.filter((e) => e.status === "CANCELLED").length;
-  const expiredCount = events.filter((e) => e.status === "EXPIRED").length;
-  const doneCount = events.filter((e) => e.status === "DONE").length;
-
   const tabs = [
-    { key: "ALL", label: "All", count: events.length },
+    { key: "ALL", label: "All", count: allEvents.length },
     { key: "PENDING", label: "Pending", count: pendingCount },
+    {
+      key: "AWAITING_HR_APPROVAL",
+      label: "Awaiting Approval",
+      count: awaitingApprovalCount,
+    },
     { key: "APPROVED", label: "Approved", count: approvedCount },
     { key: "REJECTED", label: "Rejected", count: rejectedCount },
-    { key: "CANCELLED", label: "Cancelled", count: cancelledCount },
+    { key: "COMPLETE", label: "Complete", count: completeCount },
     { key: "EXPIRED", label: "Expired", count: expiredCount },
-    { key: "DONE", label: "Done", count: doneCount },
   ];
-
-  const filteredEvents =
-    statusFilter && statusFilter !== "ALL"
-      ? events.filter((event) => event.status === statusFilter)
-      : events;
 
   const handleStatusChange = (status: string | null) => {
     setIsTransitioning(true);
@@ -133,7 +164,7 @@ const useHR = () => {
     tabs,
     statusFilter,
     handleStatusChange,
-    isTransitioning,
+    isTransitioning: isTransitioning || isLoadingEvents,
     isCreatingEvent: createEventMutation.isPending,
     vendorsData,
     isLoadingVendors,

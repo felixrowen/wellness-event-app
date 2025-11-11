@@ -10,18 +10,21 @@ import {
   Button,
   Skeleton,
 } from "@heroui/react";
-import { FiCalendar, FiClock, FiMapPin } from "react-icons/fi";
+import { FiMapPin } from "react-icons/fi";
 
-import { EventRequest } from "@/data/mockEvents";
 import { Role, getStatusLabel, getStatusColor } from "@/utils/statusLabels";
-import { formatDate, formatTime } from "@/utils/helpers";
+import { EVENT_CATEGORY_LABELS, EVENT_CATEGORY, IEvent } from "@/types";
 
 export interface EventTableProps {
-  events: EventRequest[];
-  onViewDetails?: (event: EventRequest) => void;
+  events: IEvent[];
+  onViewDetails?: (event: IEvent) => void;
   isLoading?: boolean;
   userRole?: Role;
 }
+
+const getCategoryLabel = (category: number): string => {
+  return EVENT_CATEGORY_LABELS[category as EVENT_CATEGORY];
+};
 
 const EventTable: FC<EventTableProps> = ({
   events,
@@ -35,7 +38,7 @@ const EventTable: FC<EventTableProps> = ({
         <TableColumn>EVENT</TableColumn>
         <TableColumn>COMPANY</TableColumn>
         <TableColumn>LOCATION</TableColumn>
-        <TableColumn>DATE & TIME</TableColumn>
+        {/* <TableColumn>DATE & TIME</TableColumn> */}
         <TableColumn>STATUS</TableColumn>
         <TableColumn>ACTIONS</TableColumn>
       </TableHeader>
@@ -57,9 +60,9 @@ const EventTable: FC<EventTableProps> = ({
                 <TableCell>
                   <Skeleton className="w-32 h-4 rounded-lg" />
                 </TableCell>
-                <TableCell>
+                {/* <TableCell>
                   <Skeleton className="w-28 h-4 rounded-lg" />
-                </TableCell>
+                </TableCell> */}
                 <TableCell>
                   <Skeleton className="w-20 h-6 rounded-full" />
                 </TableCell>
@@ -69,50 +72,49 @@ const EventTable: FC<EventTableProps> = ({
               </TableRow>
             ))
           : events.map((event) => (
-              <TableRow key={event.id}>
+              <TableRow key={event._id}>
                 <TableCell>
                   <div className="flex items-center gap-3">
                     <img
-                      alt={event.eventName}
+                      alt={event.title}
                       className={`w-16 h-16 rounded-lg object-cover ${
                         event.status === "REJECTED" ? "grayscale" : ""
                       }`}
-                      src={
-                        event.imageUrl ||
-                        "https://images.unsplash.com/photo-1540575467063-178a50c2df87?w=800&auto=format&fit=crop"
-                      }
+                      src="https://images.unsplash.com/photo-1540575467063-178a50c2df87?w=800&auto=format&fit=crop"
                     />
                     <div>
-                      <p className="font-semibold">{event.eventName}</p>
+                      <p className="font-semibold">{event.title}</p>
                       <p className="text-sm text-default-500">
-                        {event.category}
+                        {getCategoryLabel(event.category)}
                       </p>
                     </div>
                   </div>
                 </TableCell>
                 <TableCell>
-                  <p className="font-medium">{event.companyName}</p>
+                  <p className="font-medium">{event.companyInfo.companyName}</p>
                 </TableCell>
                 <TableCell>
                   <div className="flex items-center gap-2">
                     <FiMapPin size={14} />
-                    <span className="text-sm">{event.proposedLocation}</span>
+                    <span className="text-sm">{event.location || "N/A"}</span>
                   </div>
                 </TableCell>
-                <TableCell>
+                {/* <TableCell>
                   <div className="flex items-center gap-2">
                     <FiCalendar size={14} />
                     <span className="text-sm">
-                      {formatDate(event.proposedDates[0])}
+                      {event.proposedDates[0]
+                        ? formatDate(event.proposedDates[0])
+                        : "N/A"}
                     </span>
                   </div>
                   <div className="flex items-center gap-2">
                     <FiClock size={14} />
                     <span className="text-sm">
-                      {formatTime(event.dateCreated)}
+                      {event.createdAt ? formatTime(event.createdAt) : "N/A"}
                     </span>
                   </div>
-                </TableCell>
+                </TableCell> */}
                 <TableCell>
                   <Chip
                     color={getStatusColor(userRole, event.status)}

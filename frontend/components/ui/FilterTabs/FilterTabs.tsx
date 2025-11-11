@@ -1,5 +1,5 @@
 import { FC } from "react";
-import { Tabs, Tab } from "@heroui/react";
+import { Tabs, Tab, Chip } from "@heroui/react";
 
 export interface FilterTab {
   key: string;
@@ -18,6 +18,23 @@ const FilterTabs: FC<FilterTabsProps> = ({
   selectedKey,
   onSelectionChange,
 }) => {
+  const getTabTitle = (tab: FilterTab) => {
+    const isAwaitingApproval = tab.key === "AWAITING_HR_APPROVAL";
+
+    if (isAwaitingApproval && tab.count > 0) {
+      return (
+        <div className="flex items-center gap-2">
+          <span>{tab.label}</span>
+          <Chip color="danger" size="sm" variant="flat">
+            {tab.count}
+          </Chip>
+        </div>
+      );
+    }
+
+    return `${tab.label} (${tab.count})`;
+  };
+
   return (
     <Tabs
       selectedKey={selectedKey || tabs[0]?.key || ""}
@@ -28,7 +45,7 @@ const FilterTabs: FC<FilterTabsProps> = ({
       }}
     >
       {tabs.map((tab) => (
-        <Tab key={tab.key} title={`${tab.label} (${tab.count})`} />
+        <Tab key={tab.key} title={getTabTitle(tab)} />
       ))}
     </Tabs>
   );
