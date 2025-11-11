@@ -11,6 +11,10 @@ const doc = {
       url: "http://localhost:3001/api",
       description: "Local Server",
     },
+    {
+      url: "https://wellness-event-app-api.vercel.app/api",
+      description: "Production Server",
+    },
   ],
   components: {
     securitySchemes: {
