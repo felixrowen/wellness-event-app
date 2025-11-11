@@ -17,7 +17,7 @@ export interface IEvent {
     | "EXPIRED"
     | "AWAITING_VENDOR_PROPOSAL"
     | "AWAITING_HR_APPROVAL";
-  hrId: Types.ObjectId;
+  companyInfo: Types.ObjectId;
   assignedVendorId: Types.ObjectId;
   approvedVendorId?: Types.ObjectId;
   rejectionReason?: string;
@@ -69,7 +69,7 @@ const EventSchema = new mongoose.Schema<IEvent>(
       ],
       default: "PENDING",
     },
-    hrId: {
+    companyInfo: {
       type: mongoose.Schema.Types.ObjectId,
       ref: "User",
       required: true,

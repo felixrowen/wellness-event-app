@@ -9,14 +9,14 @@ export class EventRepository {
 
   async findById(id: string | Types.ObjectId): Promise<IEvent | null> {
     return EventModel.findById(id)
-      .populate("hrId", "fullName email companyName")
+      .populate("companyInfo", "fullName email companyName")
       .populate("assignedVendorId", "fullName email vendorName")
       .populate("approvedVendorId", "fullName email vendorName");
   }
 
   async findAll(filter = {}): Promise<IEvent[]> {
     return EventModel.find(filter)
-      .populate("hrId", "fullName email companyName")
+      .populate("companyInfo", "fullName email companyName")
       .populate("assignedVendorId", "fullName email vendorName")
       .populate("approvedVendorId", "fullName email vendorName")
       .sort({ createdAt: -1 });
@@ -62,7 +62,7 @@ export class EventRepository {
 
     const [events, total] = await Promise.all([
       EventModel.find(query)
-        .populate("hrId", "fullName email companyName")
+        .populate("companyInfo", "fullName email companyName")
         .populate("assignedVendorId", "fullName email vendorName")
         .populate("approvedVendorId", "fullName email vendorName")
         .sort({ createdAt: -1 })
@@ -81,9 +81,11 @@ export class EventRepository {
     };
   }
 
-  async findByHrId(hrId: string | Types.ObjectId): Promise<IEvent[]> {
-    return EventModel.find({ hrId })
-      .populate("hrId", "fullName email companyName")
+  async findByCompanyInfo(
+    companyInfoId: string | Types.ObjectId
+  ): Promise<IEvent[]> {
+    return EventModel.find({ companyInfo: companyInfoId })
+      .populate("companyInfo", "fullName email companyName")
       .populate("assignedVendorId", "fullName email vendorName")
       .populate("approvedVendorId", "fullName email vendorName")
       .sort({ createdAt: -1 });
@@ -94,7 +96,7 @@ export class EventRepository {
     data: Partial<IEvent>
   ): Promise<IEvent | null> {
     return EventModel.findByIdAndUpdate(id, data, { new: true })
-      .populate("hrId", "fullName email companyName")
+      .populate("companyInfo", "fullName email companyName")
       .populate("assignedVendorId", "fullName email vendorName")
       .populate("approvedVendorId", "fullName email vendorName");
   }

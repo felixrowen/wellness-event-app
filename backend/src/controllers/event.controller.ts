@@ -6,13 +6,13 @@ import { IReqUser } from "../types";
 export class EventController {
   async createEvent(req: IReqUser, res: Response) {
     try {
-      const hrId = req.user?.id;
+      const companyInfoId = req.user?.id;
 
-      if (!hrId) {
+      if (!companyInfoId) {
         return response.unauthorized(res, "User not authenticated");
       }
 
-      const result = await eventService.createEvent(req.body, hrId);
+      const result = await eventService.createEvent(req.body, companyInfoId);
       response.success(res, result, "Event created successfully!");
     } catch (error) {
       response.error(res, error, "Failed to create event");
@@ -47,7 +47,7 @@ export class EventController {
 
       response.pagination(
         res,
-        result.events,
+        { events: result.events },
         result.pagination,
         "Events retrieved successfully"
       );

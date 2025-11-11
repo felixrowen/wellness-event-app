@@ -25,6 +25,12 @@ export type EventStatus =
   | "AWAITING_VENDOR_PROPOSAL"
   | "AWAITING_HR_APPROVAL";
 
+interface CompanyInfo {
+  _id: string;
+  companyName: string;
+  fullName: string;
+  email: string;
+}
 export interface IEvent {
   _id: string;
   title: string;
@@ -34,7 +40,7 @@ export interface IEvent {
   confirmedDate?: string;
   location?: string;
   status: EventStatus;
-  hrId: string;
+  companyInfo: CompanyInfo;
   assignedVendorId: string;
   approvedVendorId?: string;
   rejectionReason?: string;

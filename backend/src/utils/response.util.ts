@@ -78,7 +78,7 @@ export default {
 
   pagination(
     res: Response,
-    data: any[],
+    data: any,
     pagination: Pagination,
     message: string
   ) {

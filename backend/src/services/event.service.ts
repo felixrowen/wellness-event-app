@@ -78,7 +78,7 @@ export class EventService {
     }
   }
 
-  async createEvent(data: ICreateEventDTO, hrId: Types.ObjectId) {
+  async createEvent(data: ICreateEventDTO, companyInfoId: Types.ObjectId) {
     try {
       const hasDates = data.proposedDates && data.proposedDates.length > 0;
       const initialStatus = hasDates ? "PENDING" : "AWAITING_VENDOR_PROPOSAL";
@@ -90,7 +90,7 @@ export class EventService {
         proposedDates: data.proposedDates || [],
         location: data.location,
         assignedVendorId: new Types.ObjectId(data.assignedVendorId),
-        hrId,
+        companyInfo: companyInfoId,
         status: initialStatus,
       });
 
@@ -109,7 +109,7 @@ export class EventService {
       const baseFilter: Record<string, Types.ObjectId> = {};
 
       if (userRole === ROLES.HR) {
-        baseFilter.hrId = userId;
+        baseFilter.companyInfo = userId;
       } else if (userRole === ROLES.VENDOR) {
         baseFilter.assignedVendorId = userId;
       }
@@ -284,7 +284,7 @@ export class EventService {
       }
 
       if (event.status === "AWAITING_HR_APPROVAL" && userRole === ROLES.HR) {
-        if (event.hrId.toString() !== userId.toString()) {
+        if (event.companyInfo.toString() !== userId.toString()) {
           throw new Error("You are not authorized to reject this event");
         }
 
