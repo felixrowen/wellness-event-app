@@ -7,7 +7,6 @@ import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import { SessionProvider } from "next-auth/react";
 
 import { ToasterProvider } from "@/contexts/ToasterContext";
-import { onErrorHander } from "@/libs/axios/responseHandler";
 import { fontSans } from "@/config/fonts";
 import "@/styles/globals.css";
 
@@ -17,16 +16,8 @@ export default function App({ Component, pageProps }: AppProps) {
   const queryClient = new QueryClient({
     defaultOptions: {
       queries: {
-        refetchOnWindowFocus: false,
+        refetchOnWindowFocus: true,
         retry: false,
-        throwOnError(error) {
-          onErrorHander(error);
-
-          return false;
-        },
-      },
-      mutations: {
-        onError: onErrorHander,
       },
     },
   });
