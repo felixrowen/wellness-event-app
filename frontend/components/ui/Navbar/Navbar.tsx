@@ -23,9 +23,9 @@ export const Navbar: FC<NavbarProps> = ({
   title = "Dashboard",
   onMenuClick,
   showMenuButton = true,
-  userName = "Vendor User",
-  userEmail = "vendor@wellness.app",
-  userAvatar = "https://i.pravatar.cc/150?u=vendor",
+  userName,
+  userEmail,
+  userAvatar,
   onLogout,
 }) => {
 

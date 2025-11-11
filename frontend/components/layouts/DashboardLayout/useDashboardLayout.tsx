@@ -1,12 +1,11 @@
 import { useState } from "react";
 import { useRouter } from "next/router";
 import { signOut, useSession } from "next-auth/react";
+import { FiHome, FiLogOut, FiCalendar } from "react-icons/fi";
 
-import { SIDEBAR_HR, SIDEBAR_VENDOR } from "./DashboardLayout.constants";
-
+import { SidebarSection } from "@/components/ui/Sidebar";
 import { Logo } from "@/components/icons";
 import { SessionExtended } from "@/types/Auth";
-import { SidebarSection } from "@/components/ui/Sidebar";
 
 interface UseDashboardLayoutProps {
   type: "hr" | "vendor";
@@ -26,6 +25,56 @@ export function useDashboardLayout({
     await signOut({ redirect: false });
     router.push("/auth/login");
   };
+
+  const SIDEBAR_HR = (handleLogout: () => void): SidebarSection[] => [
+    {
+      title: "Main",
+      items: [
+        {
+          key: "dashboard",
+          label: "Manage Events",
+          href: "/hr/dashboard",
+          icon: <FiHome size={20} />,
+        },
+      ],
+    },
+    {
+      title: "Account",
+      items: [
+        {
+          key: "logout",
+          label: "Logout",
+          icon: <FiLogOut size={20} />,
+          onClick: handleLogout,
+        },
+      ],
+    },
+  ];
+
+  const SIDEBAR_VENDOR = (handleLogout: () => void): SidebarSection[] => [
+    {
+      title: "Main",
+      items: [
+        {
+          key: "dashboard",
+          label: "My Events",
+          href: "/dashboard",
+          icon: <FiCalendar size={20} />,
+        },
+      ],
+    },
+    {
+      title: "Account",
+      items: [
+        {
+          key: "logout",
+          label: "Logout",
+          icon: <FiLogOut size={20} />,
+          onClick: handleLogout,
+        },
+      ],
+    },
+  ];
 
   const sections =
     sidebarSections ||
@@ -52,13 +101,13 @@ export function useDashboardLayout({
       title: "HR Admin Dashboard",
       userName: session?.user?.fullName,
       userEmail: session?.user?.email,
-      userAvatar: "https://i.pravatar.cc/150?u=hradmin",
+      userAvatar: "https://api.dicebear.com/9.x/fun-emoji/svg?seed=Leah",
     },
     vendor: {
       title: "Vendor Dashboard",
       userName: session?.user?.fullName,
       userEmail: session?.user?.email,
-      userAvatar: "https://i.pravatar.cc/150?u=vendor",
+      userAvatar: "https://api.dicebear.com/9.x/fun-emoji/svg?seed=Jade",
     },
   };
 
