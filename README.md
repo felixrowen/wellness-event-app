@@ -3,6 +3,7 @@
 A full-stack web application for managing wellness events between HR administrators and wellness vendors. Built with Next.js, Express.js, TypeScript, and MongoDB.
 
 ---
+
 ## 🏗 Architecture
 
 This is a monorepo containing both frontend and backend applications:
@@ -11,15 +12,15 @@ This is a monorepo containing both frontend and backend applications:
 wellness-event-app/
 ├── frontend/           # Next.js web application (Vercel)
 ├── backend/            # Express.js API server (KVM VPS)
-└── README.md           
+└── README.md
 ```
 
 ### Documentation
 
-| Component | Description | Documentation |
-|-----------|-------------|---------------|
-| **Backend** | Express.js REST API with MongoDB | [Backend Architecture](./backend/BACKEND_ARCHITECTURE.md) |
-| **Frontend** | Next.js React application | [Frontend Architecture](./frontend/FRONTEND_ARCHITECTURE.md) |
+| Component    | Description                      | Documentation                                                |
+| ------------ | -------------------------------- | ------------------------------------------------------------ |
+| **Backend**  | Express.js REST API with MongoDB | [Backend Architecture](./backend/BACKEND_ARCHITECTURE.md)    |
+| **Frontend** | Next.js React application        | [Frontend Architecture](./frontend/FRONTEND_ARCHITECTURE.md) |
 
 ---
 
@@ -74,6 +75,7 @@ npm run dev
 ## 🛠 Technology Stack
 
 ### Frontend
+
 - **Framework:** Next.js 15.3.1 (React 18.3.1)
 - **Language:** TypeScript 5.6.3
 - **UI Library:** HeroUI 2.8.5 + Tailwind CSS 4.1.11
@@ -83,6 +85,7 @@ npm run dev
 - **Deployment:** Vercel
 
 ### Backend
+
 - **Framework:** Express.js 5.1.0
 - **Language:** TypeScript 5.9.3
 - **Database:** MongoDB (Atlas)
@@ -96,6 +99,7 @@ npm run dev
 ## 📱 User Roles
 
 ### HR (Human Resources)
+
 - Create wellness events
 - View all events
 - Manage vendors
@@ -103,6 +107,7 @@ npm run dev
 - Delete/cancel events
 
 ### Vendor (Wellness Service Provider)
+
 - View assigned events
 - Approve events
 - Reject events with reason
@@ -159,6 +164,7 @@ Events progress through the following statuses:
 ```
 
 **📖 Deployment Details:**
+
 - [Backend Deployment Guide](./backend/BACKEND_ARCHITECTURE.md#deployment-architecture)
 - [Frontend Deployment Guide](./frontend/FRONTEND_ARCHITECTURE.md#deployment-architecture)
 
@@ -211,11 +217,13 @@ frontend/
 ## 🔐 API Endpoints
 
 ### Authentication
+
 - `POST /api/auth/register` - Register new user
 - `POST /api/auth/login` - Login and get JWT token
 - `GET /api/auth/me` - Get current user profile
 
 ### Events Management
+
 - `GET /api/events` - Get all events (filtered by role)
 - `GET /api/events/:id` - Get single event
 - `POST /api/events` - Create event (HR only)
@@ -224,11 +232,11 @@ frontend/
 - `DELETE /api/events/:id` - Delete event (HR only)
 
 ### Vendors
+
 - `GET /api/vendors` - Get all vendors (HR only)
 - `GET /api/vendors/:id` - Get vendor by ID
 
 **📖 Full API Documentation:** [Backend Architecture - API Architecture](./backend/BACKEND_ARCHITECTURE.md#api-architecture)
-
 
 ## 🔧 Development Workflow
 
@@ -279,6 +287,7 @@ npm run dev
 ## 📊 Database Schema
 
 ### Users Collection
+
 ```javascript
 {
   email: "user@company.com",
@@ -291,6 +300,7 @@ npm run dev
 ```
 
 ### Events Collection
+
 ```javascript
 {
   title: "Yoga Workshop",
@@ -317,16 +327,19 @@ npm run dev
 ## 🎨 UI Components
 
 ### Layouts
+
 - **DashboardLayout** - Header + Sidebar + Content
 - **AuthLayout** - Centered layout for login/register
 
 ### Views
+
 - **HRDashboard** - Event management for HR
 - **VendorDashboard** - Event approval for vendors
 - **Login** - Authentication form
 - **Register** - Registration form
 
 ### UI Components
+
 - **EventCard** - Card displaying event information
 - **EventTable** - Table view of events
 - **FilterTabs** - Status filter tabs
