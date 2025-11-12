@@ -18,8 +18,8 @@ wellness-event-app/
 
 | Component | Description | Documentation |
 |-----------|-------------|---------------|
-| **Backend** | Express.js REST API with MongoDB | [Backend Architecture](./backend/ARCHITECTURE.md) |
-| **Frontend** | Next.js React application | [Frontend Architecture](./frontend/ARCHITECTURE.md) |
+| **Backend** | Express.js REST API with MongoDB | [Backend Architecture](./backend/BACKEND_ARCHITECTURE.md) |
+| **Frontend** | Next.js React application | [Frontend Architecture](./frontend/FRONTEND_ARCHITECTURE.md) |
 
 ---
 
@@ -159,8 +159,8 @@ Events progress through the following statuses:
 ```
 
 **📖 Deployment Details:**
-- [Backend Deployment Guide](./backend/ARCHITECTURE.md#deployment-architecture)
-- [Frontend Deployment Guide](./frontend/ARCHITECTURE.md#deployment-architecture)
+- [Backend Deployment Guide](./backend/BACKEND_ARCHITECTURE.md#deployment-architecture)
+- [Frontend Deployment Guide](./frontend/FRONTEND_ARCHITECTURE.md#deployment-architecture)
 
 ---
 
@@ -185,7 +185,7 @@ backend/
 └── package.json
 ```
 
-**📖 Full Structure:** [Backend Architecture - Project Structure](./backend/ARCHITECTURE.md#project-structure)
+**📖 Full Structure:** [Backend Architecture - Project Structure](./backend/BACKEND_ARCHITECTURE.md#project-structure)
 
 ### Frontend Structure
 
@@ -204,7 +204,7 @@ frontend/
 └── config/               # Configuration files
 ```
 
-**📖 Full Structure:** [Frontend Architecture - Project Structure](./frontend/ARCHITECTURE.md#project-structure)
+**📖 Full Structure:** [Frontend Architecture - Project Structure](./frontend/FRONTEND_ARCHITECTURE.md#project-structure)
 
 ---
 
@@ -227,7 +227,7 @@ frontend/
 - `GET /api/vendors` - Get all vendors (HR only)
 - `GET /api/vendors/:id` - Get vendor by ID
 
-**📖 Full API Documentation:** [Backend Architecture - API Architecture](./backend/ARCHITECTURE.md#api-architecture)
+**📖 Full API Documentation:** [Backend Architecture - API Architecture](./backend/BACKEND_ARCHITECTURE.md#api-architecture)
 
 
 ## 🔧 Development Workflow
@@ -310,7 +310,7 @@ npm run dev
 }
 ```
 
-**📖 Full Schema:** [Backend Architecture - Database Schema](./backend/ARCHITECTURE.md#database-schema)
+**📖 Full Schema:** [Backend Architecture - Database Schema](./backend/BACKEND_ARCHITECTURE.md#database-schema)
 
 ---
 
@@ -335,7 +335,7 @@ npm run dev
 - **Sidebar** - Side menu navigation
 - **Toaster** - Toast notifications
 
-**📖 Component Details:** [Frontend Architecture - Core Components](./frontend/ARCHITECTURE.md#core-components)
+**📖 Component Details:** [Frontend Architecture - Core Components](./frontend/FRONTEND_ARCHITECTURE.md#core-components)
 
 ---
 
