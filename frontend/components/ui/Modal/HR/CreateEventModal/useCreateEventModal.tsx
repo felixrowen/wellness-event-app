@@ -9,7 +9,18 @@ const createEventSchema: Yup.ObjectSchema<ICreateEventDTO> = Yup.object({
   description: Yup.string().required("Description is required"),
   category: Yup.number().required("Category is required"),
   assignedVendorId: Yup.string().required("Please select a vendor"),
-  proposedDates: Yup.array().of(Yup.string().required()).optional(),
+  proposedDates: Yup.array()
+    .of(Yup.string())
+    .test(
+      "no-empty-dates",
+      "Please fill in all date fields or remove empty ones",
+      (value) => {
+        if (!value || value.length === 0) return true;
+
+        return value.every((date) => date && date.trim() !== "");
+      },
+    )
+    .optional(),
   location: Yup.string().optional(),
   duration: Yup.string().optional(),
   audience: Yup.string().optional(),

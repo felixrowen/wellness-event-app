@@ -121,7 +121,7 @@ export function CreateEventModal({
                       {Object.entries(EVENT_CATEGORY_LABELS).map(
                         ([key, label]) => (
                           <SelectItem key={key}>{label}</SelectItem>
-                        ),
+                        )
                       )}
                     </Select>
                   )}
@@ -171,27 +171,35 @@ export function CreateEventModal({
                   </div>
 
                   {proposedDates?.map((date, index) => (
-                    <div key={index} className="flex gap-2 items-center">
-                      <DatePicker
-                        className="flex-1 bg-transparent"
-                        granularity="second"
-                        label={`Date Option ${index + 1}`}
-                        minValue={today(getLocalTimeZone())}
-                        popoverProps={{
-                          placement: "top",
-                        }}
-                        value={date ? parseDateTime(date) : null}
-                        variant="bordered"
-                        onChange={(value) => {
-                          if (value) {
-                            const isoDate = `${value.year}-${String(value.month).padStart(2, "0")}-${String(value.day).padStart(2, "0")}T${String(value.hour).padStart(2, "0")}:${String(value.minute).padStart(2, "0")}:${String(value.second).padStart(2, "0")}`;
-
-                            handleProposedDateChange(index, isoDate);
-                          } else {
-                            handleProposedDateChange(index, "");
+                    <div key={index} className="flex gap-2 items-start">
+                      <div className="flex-1">
+                        <DatePicker
+                          className="w-full bg-transparent"
+                          errorMessage={
+                            !date && errors.proposedDates?.message
+                              ? errors.proposedDates.message
+                              : undefined
                           }
-                        }}
-                      />
+                          granularity="second"
+                          isInvalid={!date && !!errors.proposedDates}
+                          label={`Date Option ${index + 1}`}
+                          minValue={today(getLocalTimeZone())}
+                          popoverProps={{
+                            placement: "top",
+                          }}
+                          value={date ? parseDateTime(date) : null}
+                          variant="bordered"
+                          onChange={(value) => {
+                            if (value) {
+                              const isoDate = `${value.year}-${String(value.month).padStart(2, "0")}-${String(value.day).padStart(2, "0")}T${String(value.hour).padStart(2, "0")}:${String(value.minute).padStart(2, "0")}:${String(value.second).padStart(2, "0")}`;
+
+                              handleProposedDateChange(index, isoDate);
+                            } else {
+                              handleProposedDateChange(index, "");
+                            }
+                          }}
+                        />
+                      </div>
                       <Button
                         isIconOnly
                         size="lg"
