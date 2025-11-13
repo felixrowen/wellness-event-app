@@ -20,7 +20,7 @@ export default NextAuth({
         password: { label: "password", type: "password" },
       },
       async authorize(
-        credentials: Record<"identifier" | "password", string> | undefined,
+        credentials: Record<"identifier" | "password", string> | undefined
       ): Promise<UserExtended | null> {
         const { identifier, password } = credentials as {
           identifier: string;
@@ -46,7 +46,7 @@ export default NextAuth({
                 Authorization: `Bearer ${token}`,
                 "ngrok-skip-browser-warning": "true",
               },
-            },
+            }
           );
 
           if (!profileResult.ok) {
