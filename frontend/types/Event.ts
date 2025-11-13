@@ -31,6 +31,14 @@ interface CompanyInfo {
   fullName: string;
   email: string;
 }
+
+interface VendorInfo {
+  _id: string;
+  vendorName: string;
+  fullName: string;
+  email: string;
+}
+
 export interface IEvent {
   _id: string;
   title: string;
@@ -43,8 +51,8 @@ export interface IEvent {
   audience?: string;
   status: EventStatus;
   companyInfo: CompanyInfo;
-  assignedVendorId: string;
-  approvedVendorId?: string;
+  assignedVendorId: string | VendorInfo;
+  approvedVendorId?: string | VendorInfo;
   rejectionReason?: string;
   createdAt?: string;
   updatedAt?: string;

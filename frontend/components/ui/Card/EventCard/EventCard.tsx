@@ -72,6 +72,12 @@ export const EventCard: FC<EventCardProps> = ({
         <p className="text-sm font-medium text-primary line-clamp-1">
           {event.companyInfo?.companyName || "N/A"}
         </p>
+        {typeof event.assignedVendorId === "object" &&
+          event.assignedVendorId?.vendorName && (
+            <p className="text-xs text-default-500 line-clamp-1">
+              Vendor: {event.assignedVendorId.vendorName}
+            </p>
+          )}
 
         <p className="text-sm text-default-600 line-clamp-2">
           {event.description}

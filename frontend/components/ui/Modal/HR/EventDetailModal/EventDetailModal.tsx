@@ -157,6 +157,23 @@ export function EventDetailModal({
                 </div>
               )}
 
+              {viewMode === "vendor"
+                ? null
+                : typeof event.assignedVendorId === "object" &&
+                  event.assignedVendorId?.vendorName && (
+                    <div>
+                      <div className="flex items-center gap-2 mb-2">
+                        <FiUser className="text-default-400" size={16} />
+                        <h4 className="text-sm font-semibold text-default-700">
+                          Assigned Vendor
+                        </h4>
+                      </div>
+                      <p className="text-sm text-default-700">
+                        {event.assignedVendorId.vendorName}
+                      </p>
+                    </div>
+                  )}
+
               <div>
                 <div className="flex items-center gap-2 mb-3">
                   <FiInfo className="text-default-500" size={18} />

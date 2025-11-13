@@ -38,6 +38,7 @@ const EventTable: FC<EventTableProps> = ({
       <TableHeader>
         <TableColumn>EVENT</TableColumn>
         <TableColumn>COMPANY</TableColumn>
+        <TableColumn>VENDOR</TableColumn>
         <TableColumn>LOCATION</TableColumn>
         <TableColumn>STATUS</TableColumn>
         <TableColumn>ACTIONS</TableColumn>
@@ -59,6 +60,9 @@ const EventTable: FC<EventTableProps> = ({
                       <Skeleton className="w-32 h-4 rounded-lg" />
                     </div>
                   </div>
+                </TableCell>
+                <TableCell>
+                  <Skeleton className="w-24 h-4 rounded-lg" />
                 </TableCell>
                 <TableCell>
                   <Skeleton className="w-24 h-4 rounded-lg" />
@@ -95,6 +99,14 @@ const EventTable: FC<EventTableProps> = ({
                 </TableCell>
                 <TableCell>
                   <p className="font-medium">{event.companyInfo.companyName}</p>
+                </TableCell>
+                <TableCell>
+                  <p className="text-sm">
+                    {typeof event.assignedVendorId === "object" &&
+                    event.assignedVendorId?.vendorName
+                      ? event.assignedVendorId.vendorName
+                      : "N/A"}
+                  </p>
                 </TableCell>
                 <TableCell>
                   <div className="flex items-center gap-2">
