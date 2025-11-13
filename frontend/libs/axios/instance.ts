@@ -6,6 +6,7 @@ import { SessionExtended } from "@/types/Auth";
 
 const headers = {
   "Content-Type": "application/json",
+  "ngrok-skip-browser-warning": "true",
 };
 
 const instance = axios.create({
@@ -24,7 +25,7 @@ instance.interceptors.request.use(
 
     return request;
   },
-  (error) => Promise.reject(error),
+  (error) => Promise.reject(error)
 );
 
 instance.interceptors.response.use(
@@ -38,7 +39,7 @@ instance.interceptors.response.use(
     }
 
     return Promise.reject(error);
-  },
+  }
 );
 
 export default instance;
